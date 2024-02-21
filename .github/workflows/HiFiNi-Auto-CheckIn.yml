@@ -10,7 +10,8 @@ on:
 
 jobs:
   build:
-
+    env:
+      COOKIE: ${{ secrets.COOKIE }}
     runs-on: ubuntu-latest
 
     steps:
