@@ -60,11 +60,7 @@ public class Main {
         ResultVO resultVO = toResultVO(result);
 
         // 发送微信推送
-        if (serverChanKey != null) {
-            publishWechat(httpClient, serverChanKey, resultVO, duration);
-        } else {
-            System.out.println("SERVER_CHAN 环境变量未设置");
-        }
+        publishWechat(httpClient, serverChanKey, resultVO, duration);
 
         // 关闭client
         httpClient.close();
@@ -75,6 +71,10 @@ public class Main {
     }
 
     public static void publishWechat(CloseableHttpClient httpClient, String serverChanKey, ResultVO resultVO, Long duration) {
+        if (serverChanKey == null) {
+            System.out.println("SERVER_CHAN 环境变量未设置");
+            return;
+        }
         String title;
         if (resultVO.getCode() == -1) {
             title = "HiFiNi签到失败";
