@@ -25,6 +25,7 @@
 
 
 ## 获取HifiNiCookie
+访问`https://www.hifini.com/`
 首页`F12`打开调试工具,在请求标头中找到并复制cookie的值
 ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/97528823-4d31-4c72-bcca-e95bb5d75792)
 
