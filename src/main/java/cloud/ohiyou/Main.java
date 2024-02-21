@@ -1,7 +1,6 @@
 package cloud.ohiyou;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -28,7 +27,7 @@ public class Main {
 
         // 获取环境变量
         String cookieValue = System.getenv("COOKIE");
-
+         cookieValue = "bbs_sid=nu7tm5k3o2n6p0572i0ifjfum0; Hm_lvt_4ab5ca5f7f036f4a4747f1836fffe6f2=1702434178,1703638979,1704182270; bbs_token=B_2B_2BEx5cgZMw0yOZLu9VkMWbf222vbux51Sf1vfkNXtrK_2BpnfiP77eqmO_2B8AX2P6pOjNyDfc3kKnCuQfU8M6yslx2cX4nKC_2BM; 75522e99ef4ef3be3069767a423f422d=7cf4025beefac8a398128e45d1462d9b";
         String serverChanKey = System.getenv("SERVER_CHAN");
 
         if (cookieValue == null) {
@@ -39,7 +38,7 @@ public class Main {
         // 发送签到请求
         HttpPost httpPost = new HttpPost("https://www.hifini.com/sg_sign.htm");
         httpPost.setHeader("Cookie", cookieValue);
-        httpPost.setHeader("X-Requested-With","XMLHttpRequest");
+        httpPost.setHeader("X-Requested-With", "XMLHttpRequest");
         httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
 
         HttpResponse response = httpClient.execute(httpPost);
@@ -63,16 +62,15 @@ public class Main {
 
         // 发送微信推送
         if (serverChanKey != null) {
-        publishWechat(httpClient,serverChanKey,resultVO,duration);
+            publishWechat(httpClient, serverChanKey, resultVO, duration);
         }
 
         // 关闭client
         httpClient.close();
     }
 
-    private static ResultVO toResultVO(StringBuffer result) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(result.toString(), ResultVO.class);
+    private static ResultVO toResultVO(StringBuffer result) {
+        return JSONObject.parseObject(result.toString(), ResultVO.class);
     }
 
     public static void publishWechat(CloseableHttpClient httpClient, String serverChanKey, ResultVO resultVO, Long duration) {
@@ -88,7 +86,7 @@ public class Main {
         }
         HttpGet httpGet = null;
         try {
-            httpGet = new HttpGet("https://sctapi.ftqq.com/" + serverChanKey + ".send?title="+ URLEncoder.encode(title, "UTF-8")+"&desp="+URLEncoder.encode(resultVO.getMessage()));
+            httpGet = new HttpGet("https://sctapi.ftqq.com/" + serverChanKey + ".send?title=" + URLEncoder.encode(title, "UTF-8") + "&desp=" + URLEncoder.encode(resultVO.getMessage()));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
