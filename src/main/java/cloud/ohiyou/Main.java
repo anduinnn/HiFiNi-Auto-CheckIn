@@ -27,7 +27,6 @@ public class Main {
 
         // 获取环境变量
         String cookieValue = System.getenv("COOKIE");
-         cookieValue = "bbs_sid=nu7tm5k3o2n6p0572i0ifjfum0; Hm_lvt_4ab5ca5f7f036f4a4747f1836fffe6f2=1702434178,1703638979,1704182270; bbs_token=B_2B_2BEx5cgZMw0yOZLu9VkMWbf222vbux51Sf1vfkNXtrK_2BpnfiP77eqmO_2B8AX2P6pOjNyDfc3kKnCuQfU8M6yslx2cX4nKC_2BM; 75522e99ef4ef3be3069767a423f422d=7cf4025beefac8a398128e45d1462d9b";
         String serverChanKey = System.getenv("SERVER_CHAN");
 
         if (cookieValue == null) {
