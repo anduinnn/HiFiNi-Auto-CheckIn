@@ -62,6 +62,8 @@ public class Main {
         // 发送微信推送
         if (serverChanKey != null) {
             publishWechat(httpClient, serverChanKey, resultVO, duration);
+        } else {
+            System.out.println("SERVER_CHAN 环境变量未设置");
         }
 
         // 关闭client
