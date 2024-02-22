@@ -1,3 +1,4 @@
+**每天00.00执行签到任务(根据github当前时段的任务数量,可能会有延迟)**
 # 使用方法
 
 1. fork此仓库
@@ -32,4 +33,9 @@
 ## 获取Server酱的key(需要关注公众号)
 访问 `https://sct.ftqq.com/`
 ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/c70b4471-2933-4441-964c-5aa2873c3590)
+
+## 如何拉取最新代码?
+在自己的仓库里找到此项目
+![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/46ab90db-b7fb-4097-9abe-fde8c2c3543e)
+
 
