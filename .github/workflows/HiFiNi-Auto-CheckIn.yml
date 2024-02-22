@@ -6,12 +6,13 @@ name: HiFINI-Auto-CheckIn
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # 每天 00:00 时间执行
+    - cron: '0 16 * * *' # 每天 00:00 时间执行
 
 jobs:
   build:
     env:
       COOKIE: ${{ secrets.COOKIE }}
+      SERVER_CHAN: ${{ secrets.SERVER_CHAN }}
     runs-on: ubuntu-latest
 
     steps:
