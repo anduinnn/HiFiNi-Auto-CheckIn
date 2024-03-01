@@ -1,14 +1,14 @@
-package cloud.ohiyou;
+package cloud.ohiyou.vo;
 
 /**
  * @author ohiyou
  * @since 2024/2/21 11:37
  */
-public class ResultVO {
+public class SignResultVO {
     private Integer code;
     private String message;
 
-    public ResultVO(int code, String message) {
+    public SignResultVO(int code, String message) {
         this.code = code;
         this.message = message;
     }
