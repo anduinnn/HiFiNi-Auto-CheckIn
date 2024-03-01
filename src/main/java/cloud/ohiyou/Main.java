@@ -230,9 +230,7 @@ public class Main {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-            try (Response response = client.newCall(request).execute()) { // Execute the request and get the response
-                log(response.body().string());
-            }
+            client.newCall(request).execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
