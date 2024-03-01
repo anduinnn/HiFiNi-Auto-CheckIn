@@ -27,7 +27,7 @@ public class Main {
     public static String SI_SIGN = "";
     private static final String COOKIE = System.getenv("COOKIE");
     //    private static final String COOKIE = "bbs_sid=nu7tm5k3o2n6p0572i0ifjfum0; Hm_lvt_4ab5ca5f7f036f4a4747f1836fffe6f2=1702434178,1703638979,1704182270; bbs_token=ergMsAdKvR67sJ4TQWMZCy2SKEcrCBKCnEb3Ouq7eSmjozqO_2FgoUcuojD8EFxLN0yHmZH5NQKlEbdapmYSVPX9jPpIMj0Fpr";
-    private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN_KEY");
+    private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
