@@ -50,6 +50,7 @@ public class Main {
             }
             CaptchaTaskResultVO resultVO = sendCrackCaptchaRequest(COOKIE);
             SignResultVO signResultVO = sendSignInRequest(COOKIE, resultVO);
+            System.out.println(signResultVO);
             long duration = System.currentTimeMillis() - startTime;
 
             publishWechat(SERVER_CHAN_KEY, signResultVO, duration);
