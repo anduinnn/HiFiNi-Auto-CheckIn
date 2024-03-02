@@ -25,8 +25,7 @@ public class Main {
     public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
     public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
     public static String SI_SIGN = "";
-    private static final String COOKIE = "bbs_sid=psm9vpjjkj5583u5gic3ie69uk; bbs_token=rmU2ufIufpp3AwHcyOr5IBFtLj_2Bd5yhJEKztW3r17M995BnWTzbDbUHXra16OFa9ESqwCqjK7uvC45Uuqk2FQdlGMukUzYRY";
-    //    private static final String COOKIE = System.getenv("COOKIE");
+    private static final String COOKIE = System.getenv("COOKIE");
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
