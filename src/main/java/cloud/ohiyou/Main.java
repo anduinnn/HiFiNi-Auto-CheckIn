@@ -25,7 +25,8 @@ public class Main {
     public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
     public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
     public static String SI_SIGN = "";
-    private static final String COOKIE = System.getenv("COOKIE");
+    private static final String COOKIE = "bbs_sid=psm9vpjjkj5583u5gic3ie69uk; bbs_token=rmU2ufIufpp3AwHcyOr5IBFtLj_2Bd5yhJEKztW3r17M995BnWTzbDbUHXra16OFa9ESqwCqjK7uvC45Uuqk2FQdlGMukUzYRY";
+    //    private static final String COOKIE = System.getenv("COOKIE");
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -177,25 +178,25 @@ public class Main {
     }
 
     private static SignResultVO sendSignInRequest(String cookieValue, CaptchaTaskResultVO resultVO) throws IOException {
-//        SolutionVO solutionVO = resultVO.getSolution();
-
-        // 构建参数
-//        RequestBody formBody = new FormBody.Builder()
-//                .add("lot_number", solutionVO.getLotNumber())
-//                .add("captcha_output", solutionVO.getCaptchaOutPut())
-//                .add("pass_token", solutionVO.getPassToken())
-//                .add("gen_time", solutionVO.getGenTime())
-//                .add("sg_sign", SI_SIGN)
-//                .build();
+        SolutionVO solutionVO = resultVO.getSolution();
 
         // 构建参数
         RequestBody formBody = new FormBody.Builder()
-                .add("lot_number", "ac9a05e6a56f42f7bd48b4d859ae6f26")
-                .add("captcha_output", "bLnbSIpbDOqeoY74RN5UKO16sOsEEJ0VtfC1MBeGBtJ_TbJtwNLWpDYVovG190EPZejsPos3w145HMH3gyuZd6iPGy2LjDXQ8lr0OzojLoH752M2ZS3O2fq6w68c1BEJFnlWC4f9gDoLnnbp8aISnVP4Fj5Py3syfHqmS-QgVT_A80ucPwJU5KHOYddUyVr9nn4UP07DHVF8joUi6Vmu2ujQ_UxvXVgIQOaychWjitt2z-txSIZzJqDsrC31Aq6NG8726RCVPZHRoyr65pGZ-_aBLO2_NuRcOrdJSCx2kKL4f0wHl5ytJAMjqWLI-ZHbUNSvqeJelHm89pM2O_m5xPIy_X7RJIs7sh0GDMgHKyOnHxRM4RvETy79_FG1wXphcveCrzdor9u874RPs228gpkIAW2plf4of1CZjwrCe4VBy54vW2F3H4PJJdpp_1PC")
-                .add("pass_token", "ec86038f04db5d05e8fcb27353a552aae04981051ca591976d36ac365701e79c")
-                .add("gen_time", "1709277249")
+                .add("lot_number", solutionVO.getLotNumber())
+                .add("captcha_output", solutionVO.getCaptchaOutPut())
+                .add("pass_token", solutionVO.getPassToken())
+                .add("gen_time", solutionVO.getGenTime())
                 .add("sg_sign", SI_SIGN)
                 .build();
+
+        // 构建参数
+//        RequestBody formBody = new FormBody.Builder()
+//                .add("lot_number", "ac9a05e6a56f42f7bd48b4d859ae6f26")
+//                .add("captcha_output", "bLnbSIpbDOqeoY74RN5UKO16sOsEEJ0VtfC1MBeGBtJ_TbJtwNLWpDYVovG190EPZejsPos3w145HMH3gyuZd6iPGy2LjDXQ8lr0OzojLoH752M2ZS3O2fq6w68c1BEJFnlWC4f9gDoLnnbp8aISnVP4Fj5Py3syfHqmS-QgVT_A80ucPwJU5KHOYddUyVr9nn4UP07DHVF8joUi6Vmu2ujQ_UxvXVgIQOaychWjitt2z-txSIZzJqDsrC31Aq6NG8726RCVPZHRoyr65pGZ-_aBLO2_NuRcOrdJSCx2kKL4f0wHl5ytJAMjqWLI-ZHbUNSvqeJelHm89pM2O_m5xPIy_X7RJIs7sh0GDMgHKyOnHxRM4RvETy79_FG1wXphcveCrzdor9u874RPs228gpkIAW2plf4of1CZjwrCe4VBy54vW2F3H4PJJdpp_1PC")
+//                .add("pass_token", "ec86038f04db5d05e8fcb27353a552aae04981051ca591976d36ac365701e79c")
+//                .add("gen_time", "1709277249")
+//                .add("sg_sign", SI_SIGN)
+//                .build();
 
         Request request = new Request.Builder()
                 .url("https://www.hifini.com/sg_sign.htm")
