@@ -28,4 +28,12 @@ public class SignResultVO {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        return "SignResultVO{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
