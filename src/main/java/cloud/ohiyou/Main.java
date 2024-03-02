@@ -53,12 +53,11 @@ public class Main {
             long duration = System.currentTimeMillis() - startTime;
 
             publishWechat(SERVER_CHAN_KEY, signResultVO, duration);
-
+        } catch (Exception e) {
+        } finally {
             // 关闭 OkHttpClient
             client.dispatcher().executorService().shutdown();
             client.connectionPool().evictAll();
-        } catch (Exception e) {
-
         }
     }
 
