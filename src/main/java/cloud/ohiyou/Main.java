@@ -25,7 +25,8 @@ public class Main {
     public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
     public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
     public static String SI_SIGN = "";
-    private static final String COOKIE = System.getenv("COOKIE");
+    //    private static final String COOKIE = System.getenv("COOKIE");
+    private static final String COOKIE = "";
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -42,11 +43,9 @@ public class Main {
 
             long startTime = System.currentTimeMillis();
             SI_SIGN = getSign();
-            if (SI_SIGN == null || SI_SIGN == "") {
-//                 cookie过期或者未设置
-                if (COOKIE != null) {
-                    publishWechat(SERVER_CHAN_KEY, new SignResultVO(-1, "COOKIE 过期,请重新设置"), 0L);
-                }
+            // cookie过期或者未设置
+            if (SI_SIGN == null) {
+                return;
             }
             CaptchaTaskResultVO resultVO = sendCrackCaptchaRequest(COOKIE);
             SignResultVO signResultVO = sendSignInRequest(COOKIE, resultVO);
@@ -78,7 +77,18 @@ public class Main {
                 return matcher.group(1); // 返回匹配到的第一个组（即括号中的部分）
             }
 
-            return result;
+            // 没有找到的话匹配 "<li class="nav-item"><a class="nav-link" href="user-login.htm"><i class="icon-user"></i> 登录</a></li>"
+            Pattern pattern2 = Pattern.compile("<li class=\"nav-item\"><a class=\"nav-link\" href=\"user-login.htm\"><i class=\"icon-user\"></i> 登录</a></li>");
+            Matcher matcher2 = pattern2.matcher(result);
+            if (matcher2.find()) {
+                publishWechat(SERVER_CHAN_KEY, new SignResultVO(-1, "COOKIE 过期,请重新设置"), 0L);
+                System.out.println("COOKIE 过期,请重新设置");
+                return null;
+            }
+            // 如果都不匹配表示今天已经签到过了
+            publishWechat(SERVER_CHAN_KEY, new SignResultVO(-1, "今天已经签到过了"), 0L);
+            System.out.println("今天已经签到过了");
+            return null;
         }
     }
 
