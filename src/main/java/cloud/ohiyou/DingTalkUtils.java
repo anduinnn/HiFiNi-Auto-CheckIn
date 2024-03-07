@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 /**
  * 钉钉工具箱
- * @Author 银垚
+ * @Author 银垚@mtouyao
  * @Date&Time 2024/3/7 10:25
  */
 public class DingTalkUtils {
@@ -29,15 +29,14 @@ public class DingTalkUtils {
      * @param messageText 签到信息
      * @param userIDs (可选)用户的 userId 信息[仅限钉钉内部群使用]/you need @ group user's userId
      * @param msgType (必选其一)text/markdown
-     * @userIDs
-     * @return
      */
     public static void pushBotMessage(String customRobotToken, String messageText, String userIDs, String msgType){
         try {
             if (customRobotToken == null) {
-                System.out.println("DING_ROBOT_TOKEN 环境变量未设置");
+                System.out.println("DINGTALK_WEBHOOK 环境变量未设置");
                 return;
             }
+            if (msgType == null) {msgType="markdown";}
             Long timestamp = System.currentTimeMillis();
 //            System.out.println(timestamp); // 时间戳
             String secret = "messageKey"; // 安全设置，加签密钥。
@@ -75,20 +74,20 @@ public class DingTalkUtils {
 
                 // 发送link消息
                 case "link":
-                    System.out.println("暂未开通link类型消息!");
+                    System.out.println("[钉钉机器人]暂未开通link类型消息!");
                     break;
                 // 发送ActionCard消息
                 case "ActionCard":
-                    System.out.println("暂未开通ActionCard类型消息!");
+                    System.out.println("[钉钉机器人]暂未开通ActionCard类型消息!");
                     break;
                 // 发送FeedCard消息
                 case "FeedCard":
-                    System.out.println("暂未开通FeedCard类型消息!");
+                    System.out.println("[钉钉机器人]暂未开通FeedCard类型消息!");
                     break;
 
                 /** 未匹配 */
                 default:
-                    System.out.println("消息类型未匹配!请检查调用pushBotMessage传递的msgType参数");
+                    System.out.println("[钉钉机器人]消息类型未匹配!请检查调用pushBotMessage传递的msgType参数");
                     break;
 
             }
@@ -98,7 +97,7 @@ public class DingTalkUtils {
             at.setAtUserIds(Arrays.asList(userIDs));
             req.setAt(at);
             OapiRobotSendResponse rsp = client.execute(req, customRobotToken);
-            System.out.println(rsp.getBody());
+            System.out.println("钉钉机器人返回信息："+rsp.getBody());
         } catch (ApiException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
