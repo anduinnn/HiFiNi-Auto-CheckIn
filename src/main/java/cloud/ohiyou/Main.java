@@ -26,6 +26,7 @@ public class Main {
     public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
     public static String SI_SIGN = "";
     private static final String COOKIE = System.getenv("COOKIE");
+    private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     // private static final String COOKIE = "";
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
@@ -53,6 +54,7 @@ public class Main {
             long duration = System.currentTimeMillis() - startTime;
 
             publishWechat(SERVER_CHAN_KEY, signResultVO, duration);
+            DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(),"", "markdown"); // 推送钉钉机器人
         } catch (Exception e) {
             e.printStackTrace(); // 或者使用日志框架记录异常
         } finally {
