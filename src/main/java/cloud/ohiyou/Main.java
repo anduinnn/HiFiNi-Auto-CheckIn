@@ -7,10 +7,9 @@ package cloud.ohiyou;
 
 import cloud.ohiyou.utils.DingTalkUtils;
 import cloud.ohiyou.utils.WeChatWorkUtils;
-import cloud.ohiyou.vo.*;
+import cloud.ohiyou.vo.SignResultVO;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
-import okhttp3.Cookie;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,10 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-//    public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
-//    public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
-//    private static final String COOKIE = System.getenv("COOKIE");
-    private static final String COOKIE = "bbs_sid=jaqtf4ju8mmdav0dc0phadetoq; bbs_token=8FrZtBb3hmzeu5Ayo5dwq5rV9fFwcPcb7hI237e_2BdSTmWkiWzuZ9EDlv44Xzd1bZ612plVdxF59vpOfw43deoEuDqre2yAaW;0ff04b63d1d7714f09d544efdcbc9f5d=e5db1f1e0378ed60493d8a46339e4fe6";
+    private static final String COOKIE = System.getenv("COOKIE");
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWork_WEBHOOK = System.getenv("WXWork_WEBHOOK"); // 企业微信机器人 key 的值
     // private static final String COOKIE = "";
@@ -218,6 +214,5 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
