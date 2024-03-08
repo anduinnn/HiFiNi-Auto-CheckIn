@@ -5,27 +5,26 @@ package cloud.ohiyou;
  * @since 2024/3/1 14:19
  */
 
-import cloud.ohiyou.vo.Cookie;
+import cloud.ohiyou.utils.DingTalkUtils;
+import cloud.ohiyou.utils.WeChatWorkUtils;
 import cloud.ohiyou.vo.*;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import okhttp3.*;
+import okhttp3.Cookie;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-    public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
-    public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
-    public static String SI_SIGN = "";
-    private static final String COOKIE = System.getenv("COOKIE");
+//    public static final String CLIENT_ID = "CAP-28F1B67C27C8F7DF6F68C7DD69895A6C";
+//    public static final String CAPTCHA_ID = "9464902a3345d323ed58bde565f260ee";
+//    private static final String COOKIE = System.getenv("COOKIE");
+    private static final String COOKIE = "bbs_sid=jaqtf4ju8mmdav0dc0phadetoq; bbs_token=8FrZtBb3hmzeu5Ayo5dwq5rV9fFwcPcb7hI237e_2BdSTmWkiWzuZ9EDlv44Xzd1bZ612plVdxF59vpOfw43deoEuDqre2yAaW;0ff04b63d1d7714f09d544efdcbc9f5d=e5db1f1e0378ed60493d8a46339e4fe6";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWork_WEBHOOK = System.getenv("WXWork_WEBHOOK"); // 企业微信机器人 key 的值
     // private static final String COOKIE = "";
@@ -44,17 +43,24 @@ public class Main {
             }
 
             long startTime = System.currentTimeMillis();
-            SI_SIGN = getSign();
-            // cookie过期或者未设置
-            if (SI_SIGN == null) {
-                return;
+            // 处理cookie 格式 只留 bbs_sid 和bbs_token
+            String[] split = COOKIE.split(";");
+            StringBuilder sb = new StringBuilder();
+            for (String s : split) {
+                if (s.contains("bbs_sid") || s.contains("bbs_token")) {
+                    sb.append(s).append(";");
+                }
             }
-            CaptchaTaskResultVO resultVO = sendCrackCaptchaRequest(COOKIE);
-            SignResultVO signResultVO = sendSignInRequest(COOKIE, resultVO);
-            System.out.println(signResultVO);
-            long duration = System.currentTimeMillis() - startTime;
+            String cookie = sb.toString();
+            // 发送签到请求
+            SignResultVO signResultVO = initialSendSignInRequest(cookie);
+            long endTime = System.currentTimeMillis();
 
-            publishWechat(SERVER_CHAN_KEY, signResultVO, duration);
+            log("耗时: " + (endTime - startTime) + "ms");
+            log("签到结果: " + JSON.toJSONString(signResultVO));
+
+            // 推送
+            publishWechat(SERVER_CHAN_KEY, signResultVO, (endTime - startTime));
             DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(),"", "markdown"); // 推送钉钉机器人
             WeChatWorkUtils.pushBotMessage(WXWork_WEBHOOK, signResultVO.getMessage(), "markdown");
         } catch (Exception e) {
@@ -66,81 +72,42 @@ public class Main {
         }
     }
 
-    private static String getSign() throws IOException {
-        Request request = new Request.Builder()
-                .url("https://www.hifini.com/")
-                .addHeader("Cookie", COOKIE)
-                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
-                .build();
+    private static String getSignKey(String result) throws IOException {
+        String baseUrl = "https://www.hifini.com";
+        // 获取 src 后的地址
+        Pattern patternSrc = Pattern.compile("src=\"([^\"]+)\"");
+        Matcher matcherSrc = patternSrc.matcher(result);
+        if (matcherSrc.find()) {
+            baseUrl += matcherSrc.group(1);
 
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            // 发送renji请求
+            Request request = new Request.Builder()
+                    .url(baseUrl)
+                    .addHeader("Cookie",COOKIE)
+                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)")
+                    .build();
 
-            String result = readResponse(response);
-            // 使用正则表达式匹配所需的值
-            Pattern pattern = Pattern.compile("formData.append\\('sg_sign', '(.+?)'\\)");
-            Matcher matcher = pattern.matcher(result);
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-            if (matcher.find()) {
-                return matcher.group(1); // 返回匹配到的第一个组（即括号中的部分）
+                // 定义正则表达式模式
+                Pattern pattern = Pattern.compile("/renji_[a-f0-9]+_([a-f0-9]+)\\.js");
+                Matcher matcher = pattern.matcher(result);
+                if (matcher.find()) {
+                    return matcher.group(1);
+                } else {
+                    throw new RuntimeException("未能通过人机校验");
+                }
             }
-
-            // 没有找到的话匹配 "<li class="nav-item"><a class="nav-link" href="user-login.htm"><i class="icon-user"></i> 登录</a></li>"
-            Pattern pattern2 = Pattern.compile("<li class=\"nav-item\"><a class=\"nav-link\" href=\"user-login.htm\"><i class=\"icon-user\"></i> 登录</a></li>");
-            Matcher matcher2 = pattern2.matcher(result);
-            if (matcher2.find()) {
-                publishWechat(SERVER_CHAN_KEY, new SignResultVO(-1, "COOKIE 过期,请重新设置"), 0L);
-                System.out.println("COOKIE 过期,请重新设置");
-                return null;
-            }
-            // 如果都不匹配表示今天已经签到过了
-            publishWechat(SERVER_CHAN_KEY, new SignResultVO(-1, "今天已经签到过了"), 0L);
-            System.out.println("今天已经签到过了");
-            return null;
+        } else {
+            throw new RuntimeException("未能通过人机校验");
         }
     }
+
 
     private static void log(String message) {
         System.out.println(message);
     }
-
-    private static CaptchaTaskResultVO sendCrackCaptchaRequest(String cookieValue) throws IOException, InterruptedException {
-        // 构建参数
-        CrackCaptchaTaskVO crackCaptchaTaskVO = new CrackCaptchaTaskVO();
-        crackCaptchaTaskVO.setType("GeeTestTaskProxyLess");
-        crackCaptchaTaskVO.setWebsiteURL("https://www.hifini.com/");
-        crackCaptchaTaskVO.setCaptchaId(CAPTCHA_ID);
-        crackCaptchaTaskVO.setProxy("");
-        crackCaptchaTaskVO.setGeetestApiServerSubdomain("");
-
-        // 拆分cookie
-        String[] split = cookieValue.split(";");
-        List<Cookie> cookies = new ArrayList<>();
-        for (String item : split) {
-            String[] strings = item.split("=");
-            Cookie cookie = new Cookie(strings[0].trim(), strings[1].trim());
-            cookies.add(cookie);
-        }
-        crackCaptchaTaskVO.setCookies(cookies);
-        CrackCaptchaVO crackCaptchaVO = new CrackCaptchaVO(CLIENT_ID, crackCaptchaTaskVO);
-
-        String json = JSONObject.toJSONString(crackCaptchaVO);
-
-        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url("https://api.capsolver.com/createTask")
-                .post(body)
-                .addHeader("Host", "api.capsolver.com")
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            String result = readResponse(response);
-            CrackCaptchaResultVO resultVO = stringToObject(result, CrackCaptchaResultVO.class);
-            return getTaskResult(resultVO.getTaskId());
-        }
-    }
-
 
     private static String readResponse(Response response) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
@@ -157,76 +124,75 @@ public class Main {
         return JSON.parseObject(result, clazz);
     }
 
-    private static CaptchaTaskResultVO getTaskResult(String taskId) throws IOException, InterruptedException {
-        // 构建参数
-        String json = JSON.toJSONString(new CaptchaTaskVO(CLIENT_ID, taskId));
-
-        RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder()
-                .url("https://api.capsolver.com/getTaskResult")
-                .post(body)
-                .addHeader("Host", "api.capsolver.com")
-                .addHeader("Content-Type", "application/json")
-                .build();
-
-        CaptchaTaskResultVO resultVO = null;
-        String status = "processing";
-        int maxRetries = 10; // 设置最大重试次数，以避免无限循环
-        int retryCount = 0;
-        while ((!"ready".equals(status)) && retryCount < maxRetries) {
-            try (Response response = client.newCall(request).execute()) {
-                String result = readResponse(response);
-
-                // 解析结果
-                resultVO = stringToObject(result, CaptchaTaskResultVO.class);
-                status = resultVO.getStatus();
-            }
-
-            if (!"ready".equals(status)) {
-                Thread.sleep(5000); // 设置延迟，比如5秒，以减少服务器负担
-                retryCount++;
-            }
+    private static SignResultVO sendSignInRequest(String cookieValue, int attempt, int maxAttempts) throws IOException, InterruptedException {
+        if (attempt > maxAttempts) {
+            System.out.println("已达到最大尝试次数。正在停止执行。");
+            return null;
         }
 
-        if (retryCount >= maxRetries) {
-            throw new IOException("已达到最大重试次数，任务仍在处理中。");
-        }
-
-        return resultVO;
-    }
-
-    private static SignResultVO sendSignInRequest(String cookieValue, CaptchaTaskResultVO resultVO) throws IOException {
-        SolutionVO solutionVO = resultVO.getSolution();
-
-        // 构建参数
-        RequestBody formBody = new FormBody.Builder()
-                .add("lot_number", solutionVO.getLotNumber())
-                .add("captcha_output", solutionVO.getCaptchaOutPut())
-                .add("pass_token", solutionVO.getPassToken())
-                .add("gen_time", solutionVO.getGenTime())
-                .add("sg_sign", SI_SIGN)
-                .build();
-
-        // 构建参数
-//        RequestBody formBody = new FormBody.Builder()
-//                .add("lot_number", "ac9a05e6a56f42f7bd48b4d859ae6f26")
-//                .add("captcha_output", "bLnbSIpbDOqeoY74RN5UKO16sOsEEJ0VtfC1MBeGBtJ_TbJtwNLWpDYVovG190EPZejsPos3w145HMH3gyuZd6iPGy2LjDXQ8lr0OzojLoH752M2ZS3O2fq6w68c1BEJFnlWC4f9gDoLnnbp8aISnVP4Fj5Py3syfHqmS-QgVT_A80ucPwJU5KHOYddUyVr9nn4UP07DHVF8joUi6Vmu2ujQ_UxvXVgIQOaychWjitt2z-txSIZzJqDsrC31Aq6NG8726RCVPZHRoyr65pGZ-_aBLO2_NuRcOrdJSCx2kKL4f0wHl5ytJAMjqWLI-ZHbUNSvqeJelHm89pM2O_m5xPIy_X7RJIs7sh0GDMgHKyOnHxRM4RvETy79_FG1wXphcveCrzdor9u874RPs228gpkIAW2plf4of1CZjwrCe4VBy54vW2F3H4PJJdpp_1PC")
-//                .add("pass_token", "ec86038f04db5d05e8fcb27353a552aae04981051ca591976d36ac365701e79c")
-//                .add("gen_time", "1709277249")
-//                .add("sg_sign", SI_SIGN)
-//                .build();
+        System.out.println("尝试第" + attempt + "次;最大:" + maxAttempts+"次");
 
         Request request = new Request.Builder()
                 .url("https://www.hifini.com/sg_sign.htm")
-                .post(formBody)
+                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
                 .addHeader("Cookie", cookieValue)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
                 .addHeader("X-Requested-With", "XMLHttpRequest")
-                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
             String result = readResponse(response);
-            return stringToObject(result, SignResultVO.class);
+            if (result.contains("正在进行人机识别")) {
+                System.out.println("遇到CAPTCHA，正在尝试绕过。");
+
+                String key = getSignKey(result);
+                String token = getRenjiToken(key);
+                cookieValue = cookieValue + " " + token;
+
+                Thread.sleep(2000); // 5-second delay
+                return sendSignInRequest(cookieValue, attempt + 1, maxAttempts);
+            }
+
+            return stringToObject(result, SignResultVO.class); // Assuming this method exists and converts the string to a SignResultVO object
+        }
+    }
+
+    /**
+     * 发送签到请求,最大五次尝试
+     * @param cookieValue cookieValue
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private static SignResultVO initialSendSignInRequest(String cookieValue) throws IOException, InterruptedException {
+        return sendSignInRequest(cookieValue, 1, 5);
+    }
+    private static String getRenjiToken(String key) throws IOException {
+        // MD5加密的字符串:renji
+        String baseUrl = "https://www.hifini.com/a20be899_96a6_40b2_88ba_32f1f75f1552_yanzheng_ip.php";
+        String type = "96c4e20a0e951f471d32dae103e83881";
+        String value = "05bb5aba7f3f54a677997f862f1a9020";
+
+        // 构建最终的
+        String urlWithParams = String.format("%s?type=%s&key=%s&value=%s", baseUrl, type, key, value);
+
+        Request request = new Request.Builder()
+                .url(urlWithParams)
+                .addHeader("Cookie",COOKIE)
+                .addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            String header = response.header("Set-Cookie");
+            if (header != null) {
+                String[] split = header.split(";");
+                return split[0];
+            } else {
+                throw new RuntimeException("未能通过人机校验");
+            }
         }
     }
 
