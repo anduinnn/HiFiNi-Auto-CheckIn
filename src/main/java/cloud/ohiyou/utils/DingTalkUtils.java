@@ -1,4 +1,4 @@
-package cloud.ohiyou;
+package cloud.ohiyou.utils;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
