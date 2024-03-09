@@ -85,8 +85,7 @@ public class Main {
             // 拼接bbs_sid和bbs_token并返回
             return bbsSid + ";" + bbsToken + ";";
         } else {
-            // 如果任一为空，则返回空字符串或抛出异常，根据具体需求而定
-            return "";
+            throw new RuntimeException("未能解析cookie");
         }
     }
 
