@@ -20,7 +20,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-    private static final String COOKIE = System.getenv("COOKIE");
+//    private static final String COOKIE = System.getenv("COOKIE");
+private static final String COOKIE = "bbs_sid=3q22tlil9nsnlh878a1jigcdu49; bbs_token=fYBfBp5Dh6ghQrBf123123123vdXgiiZiLzIuczjOU2j3ImDluhns2cMDotU7rAyh_2F_2BipT3Q5535SlmXY2l44wsYxbF8MVJucAutQYo3y; 9fd0de187176ef140a5decad986b01c4=d73dd716af5fe8a226715a94aa055390";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWork_WEBHOOK = System.getenv("WXWork_WEBHOOK"); // 企业微信机器人 key 的值
     // private static final String COOKIE = "";
@@ -40,14 +41,7 @@ public class Main {
 
             long startTime = System.currentTimeMillis();
             // 处理cookie 格式 只留 bbs_sid 和bbs_token
-            String[] split = COOKIE.split(";");
-            StringBuilder sb = new StringBuilder();
-            for (String s : split) {
-                if (s.contains("bbs_sid") || s.contains("bbs_token")) {
-                    sb.append(s).append(";");
-                }
-            }
-            String cookie = sb.toString();
+            String cookie = formatCookie(COOKIE);
             // 发送签到请求
             SignResultVO signResultVO = initialSendSignInRequest(cookie);
             long endTime = System.currentTimeMillis();
@@ -57,7 +51,7 @@ public class Main {
 
             // 推送
             publishWechat(SERVER_CHAN_KEY, signResultVO, (endTime - startTime));
-            DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(),"", "markdown"); // 推送钉钉机器人
+            DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(), "", "markdown"); // 推送钉钉机器人
             WeChatWorkUtils.pushBotMessage(WXWork_WEBHOOK, signResultVO.getMessage(), "markdown");
         } catch (Exception e) {
             e.printStackTrace(); // 或者使用日志框架记录异常
@@ -65,6 +59,34 @@ public class Main {
             // 关闭 OkHttpClient
             client.dispatcher().executorService().shutdownNow();
             client.connectionPool().evictAll();
+        }
+    }
+
+    private static String formatCookie(String cookie) {
+        String bbsSid = null;
+        String bbsToken = null;
+
+        // 分割cookie字符串
+        String[] split = cookie.split(";");
+
+        // 遍历分割后的字符串数组
+        for (String s : split) {
+            s = s.trim(); // 去除可能的前后空格
+            // 检查当前字符串是否包含bbs_sid或bbs_token
+            if (s.contains("bbs_sid")) {
+                bbsSid = s; // 存储bbs_sid
+            } else if (s.contains("bbs_token")) {
+                bbsToken = s; // 存储bbs_token
+            }
+        }
+
+        // 确保bbs_sid和bbs_token都不为空
+        if (bbsSid != null && bbsToken != null) {
+            // 拼接bbs_sid和bbs_token并返回
+            return bbsSid + ";" + bbsToken + ";";
+        } else {
+            // 如果任一为空，则返回空字符串或抛出异常，根据具体需求而定
+            return "";
         }
     }
 
@@ -145,13 +167,13 @@ public class Main {
 
                 String key = getSignKey(result);
                 String token = getRenjiToken(key);
-                cookieValue = cookieValue + " " + token;
+                cookieValue = formatCookie(cookieValue) + " " + token;
 
-                Thread.sleep(2000); // 5-second delay
+                Thread.sleep(2000);
                 return sendSignInRequest(cookieValue, attempt + 1, maxAttempts);
             }
 
-            return stringToObject(result, SignResultVO.class); // Assuming this method exists and converts the string to a SignResultVO object
+            return stringToObject(result, SignResultVO.class);
         }
     }
 
