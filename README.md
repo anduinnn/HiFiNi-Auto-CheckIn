@@ -18,11 +18,11 @@
 
 2.仓库 -> Settings -> Secrets -> New repository secret, 添加Secrets变量如下:
 
-| 变量名           | 信息                  | 是否必须 |
-| ---------------- | --------------------- | -------- |
-| COOKIE           | HiFiNi的cookie信息    | 是       |
-| SERVER_CHAN      | Service酱推送的key    | 否       |
-| DINGTALK_WEBHOOK | 钉钉机器人推送的token | 否       |
+| 变量名           | 信息                                        | 是否必须 |
+| ---------------- | ------------------------------------------- | -------- |
+| COOKIE           | HiFiNi的cookie信息                          | 是       |
+| SERVER_CHAN      | [Service酱](https://sct.ftqq.com/)推送的key | 否       |
+| DINGTALK_WEBHOOK | 钉钉机器人推送的token                       | 否       |
 
 3.启动工作流程
 ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/b89c7140-be7f-43aa-afaa-8554b4cab752)
