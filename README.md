@@ -1,28 +1,40 @@
-**每天00.00执行签到任务(根据github当前时段的任务数量,可能会有延迟)**
-# 使用方法
+<section align="center">
+    <img src="https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/e50e9fa7-3ddd-4198-be59-fc231f9b8986" alt="稀土掘金" width="260" />
+</section>
 
-1. fork此仓库
-   ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/c0a5a7b3-b921-4b13-bd68-adce964701ad)
+<h1 align="center">HiFiNi - 音乐磁场签到助手</h1>
 
-2. 设置环境变量
-   ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/7bc3df71-6a8c-466f-9854-33d21ae45f94)
+<p align="center">签到、推送、自动化工作流。</p>
 
-3. 启动工作流程
-   ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/b89c7140-be7f-43aa-afaa-8554b4cab752)
+## 通知
 
-   在工作流启动成功后可以手动触发工作流
-   ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/a1855da6-2dd4-47c3-be8c-86108527e841)
+🔈过renji验证
+
+🔈每天00.00执行签到任务(根据github当前时段的任务数量,可能会有延迟)
+
+## 如何使用
+
+1.[Fork 仓库](https://github.com/anduinnn/HiFiNi-Auto-CheckIn)
+
+2.仓库 -> Settings -> Secrets -> New repository secret, 添加Secrets变量如下:
+
+| 变量名           | 信息                  | 是否必须 |
+| ---------------- | --------------------- | -------- |
+| COOKIE           | HiFiNi的cookie信息    | 是       |
+| SERVER_CHAN      | Service酱推送的key    | 否       |
+| DINGTALK_WEBHOOK | 钉钉机器人推送的token | 否       |
+
+3.启动工作流程
+![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/b89c7140-be7f-43aa-afaa-8554b4cab752)
 
 
-# 环境变量
 
-| 变量名      | 信息               |
-| ----------- | ------------------ |
-| COOKIE`*`   | HiFiNi的cookie信息 |
-| SERVER_CHAN | Service酱推送的key |
-| DINGTALK_WEBHOOK | 钉钉机器人推送的token |
+## 如何拉取最新代码?
 
-`*`:表示必选。
+在自己的仓库里找到此项目
+![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/46ab90db-b7fb-4097-9abe-fde8c2c3543e)
+
+
 
 
 
@@ -91,9 +103,4 @@
 
    ![img_11](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/5973ff0d-d8f9-4e1c-87b9-7e2c841793f5)
    
-   
-## 如何拉取最新代码?
-在自己的仓库里找到此项目
-![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/46ab90db-b7fb-4097-9abe-fde8c2c3543e)
-
 
