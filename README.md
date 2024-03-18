@@ -8,9 +8,11 @@
 
 ## 通知
 
-🔈过renji验证
+🔈 对论坛新的签到校验方式进行适配(2024年3月18日19:37:13)
 
-🔈每天北京时间6.30执行签到任务(根据github当前时段的任务数量,可能会有延迟)
+🔈 过renji验证
+
+🔈 每天北京时间6.30执行签到任务(根据github当前时段的任务数量,可能会有延迟)
 
 ## 如何使用
 
@@ -66,28 +68,28 @@
 
    点击右上角群设置。
    
-   ![img_3](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/89ed565a-c26c-4ae9-954e-e2559c861540)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/89ed565a-c26c-4ae9-954e-e2559c861540)
    
    点击机器人
    
-   ![img_6](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/66c0fbbe-da38-404d-80a3-9982f792c036)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/66c0fbbe-da38-404d-80a3-9982f792c036)
    
    点击添加机器人x2
    
-   ![img_5](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/eae8f91f-6bf8-4571-803c-06d05978f326)
-   ![img_7](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/9d2aa7a9-3adc-4b7a-a2b2-6c8a940b41be)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/eae8f91f-6bf8-4571-803c-06d05978f326)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/9d2aa7a9-3adc-4b7a-a2b2-6c8a940b41be)
    
    选择自定义，点击添加
    
-   ![img_8](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/fbfca0bc-b981-415e-8362-7e37bf708db1)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/fbfca0bc-b981-415e-8362-7e37bf708db1)
    
    填写机器人名字（随便）、**安全设置关键词（必须有`HiFiNi`或者`HiFiNi签到`，也可以两个都添加）** --> 勾选同意免责条款 --> 点击完成
 
-   ![img_9](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/c303beb5-beb0-4dbd-8c24-d8106b83e585)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/c303beb5-beb0-4dbd-8c24-d8106b83e585)
    
    出现以下页面代表设置完成
    
-   ![img_10](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/dcdda610-7045-4bc0-9e27-0f6f0f4c36bc)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/dcdda610-7045-4bc0-9e27-0f6f0f4c36bc)
 
    **❗❗❗复制Webhook❗❗❗**
    ```
@@ -101,6 +103,6 @@
    
    成功案例：
 
-   ![img_11](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/5973ff0d-d8f9-4e1c-87b9-7e2c841793f5)
+   ![image](https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/115618748/5973ff0d-d8f9-4e1c-87b9-7e2c841793f5)
    
 

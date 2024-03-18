@@ -6,6 +6,7 @@ package cloud.ohiyou;
  */
 
 import cloud.ohiyou.utils.DingTalkUtils;
+import cloud.ohiyou.utils.HiFiNiEncryptUtil;
 import cloud.ohiyou.utils.WeChatWorkUtils;
 import cloud.ohiyou.vo.SignResultVO;
 import com.alibaba.fastjson.JSON;
@@ -21,10 +22,9 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static final String COOKIE = System.getenv("COOKIE");
-    //private static final String COOKIE = "bbs_sid=3q22tlil9nsnlh878a1jigcdu49; bbs_token=fYBfBp5Dh6ghQrBf123123123vdXgiiZiLzIuczjOU2j3ImDluhns2cMDotU7rAyh_2F_2BipT3Q5535SlmXY2l44wsYxbF8MVJucAutQYo3y; 9fd0de187176ef140a5decad986b01c4=d73dd716af5fe8a226715a94aa055390";
+    //    private static final String COOKIE = "bbs_sid=3q22tlil9nsnlh878ajigcdu49; bbs_token=vTOaYxxcCo3L24s_2FFwbDXnDY50kEhyirM7Zs1bvh_2FeQlNq_2B_2FQ2kjlY00b0IOKYhOUaQ3oi0GidfRoJgcnGaFFCzC5NR6LhoT";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWork_WEBHOOK = System.getenv("WXWork_WEBHOOK"); // 企业微信机器人 key 的值
-    // private static final String COOKIE = "";
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -43,7 +43,7 @@ public class Main {
             // 处理cookie 格式 只留 bbs_sid 和bbs_token
             String cookie = formatCookie(COOKIE);
             // 发送签到请求
-            SignResultVO signResultVO = initialSendSignInRequest(cookie);
+            SignResultVO signResultVO = sendSignInRequest(cookie);
             long endTime = System.currentTimeMillis();
 
             log("耗时: " + (endTime - startTime) + "ms");
@@ -60,6 +60,76 @@ public class Main {
             client.dispatcher().executorService().shutdownNow();
             client.connectionPool().evictAll();
         }
+    }
+
+    private static SignResultVO sendSignInRequest(String cookie) {
+        // 获取Sign
+        String sign = getSignKey(cookie);
+        // 获取加密参数
+        String dynamicKey = HiFiNiEncryptUtil.generateDynamicKey();
+        String encryptedSign = HiFiNiEncryptUtil.simpleEncrypt(sign, dynamicKey);
+
+        RequestBody formBody = new FormBody.Builder()
+                .add("sign", encryptedSign)
+                .build();
+        // 发送签到请求
+        Request request = new Request.Builder()
+                .url("https://www.hifini.com/sg_sign.htm")
+                .post(formBody)
+                .addHeader("Cookie", cookie)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
+                .addHeader("X-Requested-With", "XMLHttpRequest")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            String result = readResponse(response);
+            return stringToObject(result, SignResultVO.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(encryptedSign);
+        return null;
+    }
+
+    /**
+     * 获取加密的key
+     *
+     * @param cookie cookie
+     * @return String
+     */
+    private static String getSignKey(String cookie) {
+        // 先携带cookie访问一次签到页面获取sign
+        Request request = new Request.Builder()
+                .url("https://www.hifini.com/sg_sign.htm")
+                .get()
+                .addHeader("Cookie", cookie)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            String result = readResponse(response);
+
+            // 通过正则获取sign的值
+            if (result.contains("请登录")) {
+                throw new RuntimeException("cookie失效");
+            }
+
+            // 使用正则表达式匹配sign变量的值
+            Pattern pattern = Pattern.compile("var sign = \"([^\"]+)\"");
+            Matcher matcher = pattern.matcher(result);
+
+            if (matcher.find()) {
+                // 如果找到了匹配，提取第一组（括号内的部分）
+                String signValue = matcher.group(1);
+                System.out.println("Sign的值是: " + signValue);
+                return signValue;
+            } else {
+                throw new RuntimeException("未能获取sign,请检查cookie是否失效");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        throw new RuntimeException("未能获取sign,请检查cookie是否失效");
     }
 
     private static String formatCookie(String cookie) {
@@ -89,37 +159,6 @@ public class Main {
         }
     }
 
-    private static String getSignKey(String result) throws IOException {
-        String baseUrl = "https://www.hifini.com";
-        // 获取 src 后的地址
-        Pattern patternSrc = Pattern.compile("src=\"([^\"]+)\"");
-        Matcher matcherSrc = patternSrc.matcher(result);
-        if (matcherSrc.find()) {
-            baseUrl += matcherSrc.group(1);
-
-            // 发送renji请求
-            Request request = new Request.Builder()
-                    .url(baseUrl)
-                    .addHeader("Cookie",COOKIE)
-                    .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)")
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-                // 定义正则表达式模式
-                Pattern pattern = Pattern.compile("/renji_[a-f0-9]+_([a-f0-9]+)\\.js");
-                Matcher matcher = pattern.matcher(result);
-                if (matcher.find()) {
-                    return matcher.group(1);
-                } else {
-                    throw new RuntimeException("未能通过人机校验");
-                }
-            }
-        } else {
-            throw new RuntimeException("未能通过人机校验");
-        }
-    }
 
 
     private static void log(String message) {
@@ -139,78 +178,6 @@ public class Main {
 
     private static <T> T stringToObject(String result, Class<T> clazz) {
         return JSON.parseObject(result, clazz);
-    }
-
-    private static SignResultVO sendSignInRequest(String cookieValue, int attempt, int maxAttempts) throws IOException, InterruptedException {
-        if (attempt > maxAttempts) {
-            System.out.println("已达到最大尝试次数。正在停止执行。");
-            return null;
-        }
-
-        System.out.println("尝试第" + attempt + "次;最大:" + maxAttempts+"次");
-
-        Request request = new Request.Builder()
-                .url("https://www.hifini.com/sg_sign.htm")
-                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
-                .addHeader("Cookie", cookieValue)
-                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-                .addHeader("X-Requested-With", "XMLHttpRequest")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-            String result = readResponse(response);
-            if (result.contains("正在进行人机识别")) {
-                System.out.println("遇到CAPTCHA，正在尝试绕过。");
-
-                String key = getSignKey(result);
-                String token = getRenjiToken(key);
-                cookieValue = formatCookie(cookieValue) + " " + token;
-
-                Thread.sleep(2000);
-                return sendSignInRequest(cookieValue, attempt + 1, maxAttempts);
-            }
-
-            return stringToObject(result, SignResultVO.class);
-        }
-    }
-
-    /**
-     * 发送签到请求,最大五次尝试
-     * @param cookieValue cookieValue
-     * @return
-     * @throws IOException
-     * @throws InterruptedException
-     */
-    private static SignResultVO initialSendSignInRequest(String cookieValue) throws IOException, InterruptedException {
-        return sendSignInRequest(cookieValue, 1, 5);
-    }
-    private static String getRenjiToken(String key) throws IOException {
-        // MD5加密的字符串:renji
-        String baseUrl = "https://www.hifini.com/a20be899_96a6_40b2_88ba_32f1f75f1552_yanzheng_ip.php";
-        String type = "96c4e20a0e951f471d32dae103e83881";
-        String value = "05bb5aba7f3f54a677997f862f1a9020";
-
-        // 构建最终的
-        String urlWithParams = String.format("%s?type=%s&key=%s&value=%s", baseUrl, type, key, value);
-
-        Request request = new Request.Builder()
-                .url(urlWithParams)
-                .addHeader("Cookie",COOKIE)
-                .addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-                .build();
-
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-            String header = response.header("Set-Cookie");
-            if (header != null) {
-                String[] split = header.split(";");
-                return split[0];
-            } else {
-                throw new RuntimeException("未能通过人机校验");
-            }
-        }
     }
 
     private static void publishWechat(String serverChanKey, SignResultVO signResultVO, Long duration) {
