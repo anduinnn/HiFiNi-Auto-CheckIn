@@ -1,9 +1,0 @@
-diff a/.github/workflows/HiFiNi-Auto-CheckIn.yml b/.github/workflows/HiFiNi-Auto-CheckIn.yml	(rejected hunks)
-@@ -13,6 +13,7 @@
-     env:
-       COOKIE: ${{ secrets.COOKIE }}
-       SERVER_CHAN: ${{ secrets.SERVER_CHAN }}
-+      DINGTALK_WEBHOOK: ${{secrets.DINGTALK_WEBHOOK}}
-     runs-on: ubuntu-latest
- 
-     steps:
