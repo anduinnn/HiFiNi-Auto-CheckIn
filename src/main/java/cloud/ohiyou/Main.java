@@ -50,15 +50,9 @@ public class Main {
             log("签到结果: " + JSON.toJSONString(signResultVO));
 
             // 推送
-<<<<<<< HEAD
-//            publishWechat(SERVER_CHAN_KEY, signResultVO, (endTime - startTime));
-//            DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(), "", "markdown"); // 推送钉钉机器人
-//            WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, signResultVO.getMessage(), "markdown");
-=======
             publishWechat(SERVER_CHAN_KEY, signResultVO, (endTime - startTime));
             DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(), "", "markdown"); // 推送钉钉机器人
             WeChatWorkUtils.pushBotMessage(WXWork_WEBHOOK, signResultVO.getMessage(), "markdown");
->>>>>>> b74cd9fa72950616261acd01454e239d1209c207
         } catch (Exception e) {
             e.printStackTrace(); // 或者使用日志框架记录异常
         } finally {
