@@ -32,7 +32,7 @@ public class WeChatWorkUtils {
     public static void pushBotMessage(String WXWorkRobotKey, String messageText, String msgType){
 
         if (WXWorkRobotKey == null) {
-            System.out.println("WXWork_WEBHOOK 环境变量未设置");
+            System.out.println("WXWORK_WEBHOOK 环境变量未设置");
             return;
         }
         if (msgType == null) {msgType="markdown";}
