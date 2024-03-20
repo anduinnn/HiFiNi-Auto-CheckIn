@@ -13,7 +13,8 @@ jobs:
     env:
       COOKIE: ${{ secrets.COOKIE }}
       SERVER_CHAN: ${{ secrets.SERVER_CHAN }}
-      DINGTALK_WEBHOOK: ${{secrets.DINGTALK_WEBHOOK}}
+      DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+      WXWORK_WEBHOOK: ${{ secrets.WXWORK_WEBHOOK }}
     runs-on: ubuntu-latest
 
     steps:
