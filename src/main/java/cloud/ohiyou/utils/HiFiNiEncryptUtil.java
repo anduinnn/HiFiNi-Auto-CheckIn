@@ -1,7 +1,5 @@
 package cloud.ohiyou.utils;
 
-import java.util.Date;
-
 /**
  * @author ohiyou
  * @since 2024/3/18 9:15
@@ -10,8 +8,7 @@ public class HiFiNiEncryptUtil {
     /**
      *  待加密的字符串
      */
-    public static final String SIGN = "729a5b06332b6a6a8b1f2841730af3343d9bd871be8dd631f83cbe9dcdc6b48b";
-
+//    public static final String SIGN = "729a5b06332b6a6a8b1f2841730af3343d9bd871be8dd631f83cbe9dcdc6b48b";
 
     /**
      * 生成动态密钥的函数
