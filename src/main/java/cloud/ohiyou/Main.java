@@ -8,6 +8,7 @@ package cloud.ohiyou;
 import cloud.ohiyou.utils.DingTalkUtils;
 import cloud.ohiyou.utils.HiFiNiEncryptUtil;
 import cloud.ohiyou.utils.WeChatWorkUtils;
+import cloud.ohiyou.vo.CookieSignResult;
 import cloud.ohiyou.vo.SignResultVO;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
@@ -16,13 +17,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-    private static final String COOKIE = System.getenv("COOKIE");
-//        private static final String COOKIE = "bbs_sid=3q22tlil9nsnlh878ajigcdu49; bbs_token=vTOaYxxcCo3L24s_2FFwbDXnDY50kEhyirM7Zs1bvh_2FeQlNq_2B_2FQ2kjlY00b0IOKYhOUaQ3oi0GidfRoJgcnGaFFCzC5NR6LhoT";
+        private static final String COOKIE = System.getenv("COOKIE");
+//    private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj &\n";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
@@ -33,34 +36,58 @@ public class Main {
             .build();
 
     public static void main(String[] args) {
-        try {
-            if (COOKIE == null) {
-                log("COOKIE 环境变量未设置");
-                return;
+        List<CookieSignResult> results = new ArrayList<>();
+
+        String[] cookiesArray = COOKIE.split("&");
+        log("检测到 " + cookiesArray.length + " 个cookie");
+
+        for (int i = 0; i < cookiesArray.length; i++) {
+            String cookie = cookiesArray[i];
+            String cookieName = "Cookie" + (i + 1); // 命名cookie，如Cookie1, Cookie2...
+
+            try {
+                long startTime = System.currentTimeMillis();
+                String formattedCookie = formatCookie(cookie.trim(),i);
+                if (formattedCookie != null) {
+                    SignResultVO signResultVO = sendSignInRequest(formattedCookie);
+                    long endTime = System.currentTimeMillis();
+                    results.add(new CookieSignResult(cookieName, signResultVO, endTime - startTime));
+                }
+            } catch (Exception e) {
+                log("处理 " + cookieName + " 时发生错误: " + e.getMessage());
+            } finally {
+                // 关闭 OkHttpClient
+                client.dispatcher().executorService().shutdownNow();
+                client.connectionPool().evictAll();
             }
-
-            long startTime = System.currentTimeMillis();
-            // 处理cookie 格式 只留 bbs_sid 和bbs_token
-            String cookie = formatCookie(COOKIE);
-            // 发送签到请求
-            SignResultVO signResultVO = sendSignInRequest(cookie);
-            long endTime = System.currentTimeMillis();
-
-            log("耗时: " + (endTime - startTime) + "ms");
-            log("签到结果: " + JSON.toJSONString(signResultVO));
-
-            // 推送
-            publishWechat(SERVER_CHAN_KEY, signResultVO, (endTime - startTime));
-            DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, signResultVO.getMessage(), "", "markdown"); // 推送钉钉机器人
-            WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, signResultVO.getMessage(), "markdown");
-        } catch (Exception e) {
-            e.printStackTrace(); // 或者使用日志框架记录异常
-        } finally {
-            // 关闭 OkHttpClient
-            client.dispatcher().executorService().shutdownNow();
-            client.connectionPool().evictAll();
         }
+
+        publishResults(results);
     }
+
+    private static void publishResults(List<CookieSignResult> results) {
+        StringBuilder messageBuilder = new StringBuilder();
+        boolean allSuccess = true; // 假设所有签到都成功，直到发现失败的签到
+
+        for (CookieSignResult result : results) {
+            messageBuilder.append(result.getCookieName()).append(": ")
+                    .append("\n签到结果: ").append(result.getSignResult().getMessage())
+                    .append("\n耗时: ").append(result.getDuration()).append("ms\n\n");
+            // 检查每个签到结果，如果有失败的，则设置allSuccess为false
+            if (!result.getSignResult().getMessage().contains("成功签到")) {
+                allSuccess = false;
+            }
+        }
+
+        String title = allSuccess ? "签到成功" : "签到失败"; // 根据所有签到结果决定标题
+        // 推送
+        publishWechat(SERVER_CHAN_KEY, title,messageBuilder.toString());
+        DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, messageBuilder.toString(), "", "markdown");
+        WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, messageBuilder.toString(), "markdown");
+
+    }
+
+
 
     private static SignResultVO sendSignInRequest(String cookie) {
         // 获取Sign
@@ -81,7 +108,9 @@ public class Main {
                 .addHeader("X-Requested-With", "XMLHttpRequest")
                 .build();
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            };
             String result = readResponse(response);
             return stringToObject(result, SignResultVO.class);
         } catch (IOException e) {
@@ -132,7 +161,7 @@ public class Main {
         throw new RuntimeException("未能获取sign,请检查cookie是否失效");
     }
 
-    private static String formatCookie(String cookie) {
+    private static String formatCookie(String cookie, int index) {
         String bbsSid = null;
         String bbsToken = null;
 
@@ -143,19 +172,21 @@ public class Main {
         for (String s : split) {
             s = s.trim(); // 去除可能的前后空格
             // 检查当前字符串是否包含bbs_sid或bbs_token
-            if (s.contains("bbs_sid")) {
+            if (s.startsWith("bbs_sid=")) {
                 bbsSid = s; // 存储bbs_sid
-            } else if (s.contains("bbs_token")) {
+            } else if (s.startsWith("bbs_token=")) {
                 bbsToken = s; // 存储bbs_token
             }
         }
 
         // 确保bbs_sid和bbs_token都不为空
         if (bbsSid != null && bbsToken != null) {
+            log("成功解析第 " + (index + 1) + " 个cookie");
             // 拼接bbs_sid和bbs_token并返回
             return bbsSid + ";" + bbsToken + ";";
         } else {
-            throw new RuntimeException("未能解析cookie");
+            log("解析第 " + (index + 1) + " 个cookie失败");
+            return null; // 或者根据需要抛出异常
         }
     }
 
@@ -180,21 +211,15 @@ public class Main {
         return JSON.parseObject(result, clazz);
     }
 
-    private static void publishWechat(String serverChanKey, SignResultVO signResultVO, Long duration) {
+    private static void publishWechat(String serverChanKey, String title, String body) {
         if (serverChanKey == null) {
-            System.out.println("SERVER_CHAN 环境变量未设置");
+            log("SERVER_CHAN 环境变量未设置");
             return;
-        }
-
-        String title = (signResultVO.getMessage().contains("成功签到")) ? "HiFiNi签到成功" : "HiFiNi签到失败";
-
-        if (duration != null) {
-            title += "，耗时 " + duration + "ms";
         }
 
         try {
             String url = "https://sctapi.ftqq.com/" + serverChanKey + ".send?title=" +
-                    URLEncoder.encode(title, "UTF-8") + "&desp=" + URLEncoder.encode(signResultVO.getMessage(), "UTF-8");
+                    URLEncoder.encode(title, "UTF-8") + "&desp=" + URLEncoder.encode(body, "UTF-8");
             Request request = new Request.Builder()
                     .url(url)
                     .build();
@@ -203,4 +228,5 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 }
