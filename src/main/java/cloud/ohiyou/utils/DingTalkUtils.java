@@ -32,7 +32,7 @@ public class DingTalkUtils {
      */
     public static void pushBotMessage(String customRobotToken, String messageText, String userIDs, String msgType){
         try {
-            if (customRobotToken == null) {
+            if (customRobotToken == null || "".equals(customRobotToken)) {
                 System.out.println("DINGTALK_WEBHOOK 环境变量未设置");
                 return;
             }
