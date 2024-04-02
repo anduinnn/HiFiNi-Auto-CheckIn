@@ -45,12 +45,7 @@ public class Main {
         String[] cookiesArray = COOKIE.split("&");
         log("检测到 " + cookiesArray.length + " 个cookie");
 
-        for (int i = 0; i < cookiesArray.length; i++) {
-            String cookie = cookiesArray[i];
-            String cookieName = "Cookie" + (i + 1); // 命名cookie，如Cookie1, Cookie2...
-        }
-
-        ExecutorService executor = Executors.newFixedThreadPool(5); // N is the number of threads
+        ExecutorService executor = Executors.newFixedThreadPool(5);
         for (int i = 0; i < cookiesArray.length; i++) {
             final String cookie = cookiesArray[i];
             final int index = i;
