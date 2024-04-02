@@ -18,13 +18,15 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
     private static final String COOKIE = System.getenv("COOKIE");
-    //private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj &\n";
+    //    private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
@@ -46,25 +48,46 @@ public class Main {
         for (int i = 0; i < cookiesArray.length; i++) {
             String cookie = cookiesArray[i];
             String cookieName = "Cookie" + (i + 1); // 命名cookie，如Cookie1, Cookie2...
-
-            try {
-                long startTime = System.currentTimeMillis();
-                String formattedCookie = formatCookie(cookie.trim(),i);
-                if (formattedCookie != null) {
-                    SignResultVO signResultVO = sendSignInRequest(formattedCookie);
-                    long endTime = System.currentTimeMillis();
-                    results.add(new CookieSignResult(signResultVO, endTime - startTime));
-                }
-            } catch (Exception e) {
-                log("处理 " + cookieName + " 时发生错误: " + e.getMessage());
-            } finally {
-                // 关闭 OkHttpClient
-                client.dispatcher().executorService().shutdownNow();
-                client.connectionPool().evictAll();
-            }
         }
 
+        ExecutorService executor = Executors.newFixedThreadPool(5); // N is the number of threads
+        for (int i = 0; i < cookiesArray.length; i++) {
+            final String cookie = cookiesArray[i];
+            final int index = i;
+            executor.submit(() -> {
+                try {
+                    processCookie(cookie, index, results);
+                } catch (Exception e) {
+                    log("Error processing cookie at index " + index + ": " + e.getMessage());
+                }
+            });
+        }
+
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException ie) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+
+
+        client.dispatcher().executorService().shutdownNow();
+        client.connectionPool().evictAll();
+
         publishResults(results);
+    }
+
+    private static void processCookie(String cookie, int index, List<CookieSignResult> results) {
+        long startTime = System.currentTimeMillis();
+        String formattedCookie = formatCookie(cookie.trim(), index);
+        if (formattedCookie != null) {
+            SignResultVO signResultVO = sendSignInRequest(formattedCookie);
+            long endTime = System.currentTimeMillis();
+            results.add(new CookieSignResult(signResultVO, endTime - startTime));
+        }
     }
 
     private static void publishResults(List<CookieSignResult> results) {
