@@ -7,6 +7,7 @@ package cloud.ohiyou.vo;
 public class SignResultVO {
     private Integer code;
     private String message;
+    private String userName;
 
     public SignResultVO(int code, String message) {
         this.code = code;
@@ -29,11 +30,21 @@ public class SignResultVO {
         this.message = message;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+
     @Override
     public String toString() {
         return "SignResultVO{" +
                 "code=" + code +
                 ", message='" + message + '\'' +
+                ", userName='" + userName + '\'' +
                 '}';
     }
 }
