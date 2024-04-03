@@ -1,4 +1,7 @@
 ### Java template
+# 排除测试文件夹
+src/main/java/cloud/ohiyou/test
+
 # Compiled class file
 *.class
 
