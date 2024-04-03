@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static final String COOKIE = System.getenv("COOKIE");
-    //    private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj";
+//        private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
@@ -74,6 +74,17 @@ public class Main {
             }
         }
 
+        // 结束线程任务
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
+
+
 
         client.dispatcher().executorService().shutdownNow();
         client.connectionPool().evictAll();
@@ -110,7 +121,6 @@ public class Main {
         publishWechat(SERVER_CHAN_KEY, title,messageBuilder.toString());
         DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, messageBuilder.toString(), "", "markdown");
         WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, messageBuilder.toString(), "markdown");
-
     }
 
 
