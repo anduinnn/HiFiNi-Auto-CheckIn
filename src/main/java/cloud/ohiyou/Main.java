@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static final String COOKIE = System.getenv("COOKIE");
-//        private static final String COOKIE = "bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj&bbs_sid=7bl67b8516gvcn3qejbcsnvotf; bbs_token=1sslA6_2B2TGqkFbnc8t0HPuvahctVQURp_2B28V13Nx2eSp0oEGkMjNS5x9ZTxHrPzbvXgFzvVdcHrd_2BNU2Ar_2F_2FL63RjCym7mrj";
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
@@ -58,6 +57,9 @@ public class Main {
             futures.add(future);
         }
 
+        // 关闭线程池，使其不再接受新任务
+        executor.shutdown();
+
         // 等待所有任务完成
         for (Future<?> future : futures) {
             try {
@@ -74,8 +76,7 @@ public class Main {
             }
         }
 
-        // 结束线程任务
-        executor.shutdown();
+        // 等待线程池完全终止
         try {
             if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
@@ -83,8 +84,6 @@ public class Main {
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
-
-
 
         client.dispatcher().executorService().shutdownNow();
         client.connectionPool().evictAll();
@@ -119,8 +118,8 @@ public class Main {
         String title = allSuccess ? "签到成功" : "签到失败"; // 根据所有签到结果决定标题
         // 推送
         publishWechat(SERVER_CHAN_KEY, title,messageBuilder.toString());
-        DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, messageBuilder.toString(), "", "markdown");
-        WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, messageBuilder.toString(), "markdown");
+        DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, title, messageBuilder.toString(), "", "markdown");
+        WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, title, messageBuilder.toString(), "markdown");
     }
 
 

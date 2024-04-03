@@ -30,7 +30,7 @@ public class DingTalkUtils {
      * @param userIDs (可选)用户的 userId 信息[仅限钉钉内部群使用]/you need @ group user's userId
      * @param msgType (必选其一)text/markdown
      */
-    public static void pushBotMessage(String customRobotToken, String messageText, String userIDs, String msgType){
+    public static void pushBotMessage(String customRobotToken, String messageTitle, String messageText, String userIDs, String msgType){
         try {
             if (customRobotToken == null || "".equals(customRobotToken)) {
                 System.out.println("DINGTALK_WEBHOOK 环境变量未设置");
@@ -57,7 +57,7 @@ public class DingTalkUtils {
                 case "text":
                     //定义文本内容
                     OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();
-                    text.setContent("HiFiNi签到信息:"+messageText);
+                    text.setContent("HiFiNi签到信息:"+messageTitle+messageText);
                     //设置消息类型
                     req.setMsgtype("text");
                     req.setText(text);
@@ -67,7 +67,7 @@ public class DingTalkUtils {
                     // 定义markdown内容
                     OapiRobotSendRequest.Markdown markdown = new OapiRobotSendRequest.Markdown();
                     markdown.setTitle("HiFiNiBot消息通知");
-                    markdown.setText("# HiFiNi签到消息通知 \n > ### "+messageText+" \n");
+                    markdown.setText("# HiFiNi签到消息通知 \n ## "+messageTitle+" \n"+messageText);
                     req.setMsgtype("markdown");
                     req.setMarkdown(markdown);
                     break;
