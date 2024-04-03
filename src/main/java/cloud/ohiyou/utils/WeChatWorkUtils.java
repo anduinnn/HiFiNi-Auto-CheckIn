@@ -29,7 +29,7 @@ public class WeChatWorkUtils {
      * @param messageText 签到信息
      * @param msgType (必选其一)text/markdown
      */
-    public static void pushBotMessage(String WXWorkRobotKey, String messageText, String msgType){
+    public static void pushBotMessage(String WXWorkRobotKey, String messageTitle, String messageText, String msgType){
 
         if (WXWorkRobotKey == null || "".equals(WXWorkRobotKey)) {
             System.out.println("WXWORK_WEBHOOK 环境变量未设置");
@@ -42,12 +42,12 @@ public class WeChatWorkUtils {
             // 企业微信发送类型详解官网: https://developer.work.weixin.qq.com/document/path/91770
             // 发送text消息
             case "text":
-                jsonBody = "{\"msgtype\": \"text\",\"text\": {\"content\":\"HiFiNi签到消息通知："+messageText +"\"}}";
+                jsonBody = "{\"msgtype\": \"text\",\"text\": {\"content\":\"HiFiNi签到消息通知："+messageTitle+messageText+"\"}}";
                 //定义文本内容
                 break;
             //发送markdown消息
             case "markdown":
-                jsonBody = "{\"msgtype\": \"markdown\",\"markdown\": {\"content\":\"# HiFiNi签到消息通知 \n>"+messageText +"\"}}";
+                jsonBody = "{\"msgtype\": \"markdown\",\"markdown\": {\"content\":\"# HiFiNi签到消息通知 \n ## "+messageTitle+" \n"+messageText+"\"}}";
                 // 定义markdown内容
                 break;
 
