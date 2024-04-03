@@ -58,6 +58,9 @@ public class Main {
             futures.add(future);
         }
 
+        // 关闭线程池，使其不再接受新任务
+        executor.shutdown();
+
         // 等待所有任务完成
         for (Future<?> future : futures) {
             try {
@@ -74,8 +77,7 @@ public class Main {
             }
         }
 
-        // 结束线程任务
-        executor.shutdown();
+        // 等待线程池完全终止
         try {
             if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
@@ -83,8 +85,6 @@ public class Main {
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
-
-
 
         client.dispatcher().executorService().shutdownNow();
         client.connectionPool().evictAll();
