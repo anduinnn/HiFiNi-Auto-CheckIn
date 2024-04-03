@@ -18,9 +18,7 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,26 +44,34 @@ public class Main {
         log("检测到 " + cookiesArray.length + " 个cookie");
 
         ExecutorService executor = Executors.newFixedThreadPool(5);
+        List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < cookiesArray.length; i++) {
             final String cookie = cookiesArray[i];
             final int index = i;
-            executor.submit(() -> {
+            Future<?> future = executor.submit(() -> {
                 try {
                     processCookie(cookie, index, results);
                 } catch (Exception e) {
                     log("Error processing cookie at index " + index + ": " + e.getMessage());
                 }
             });
+            futures.add(future);
         }
 
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(20, TimeUnit.SECONDS)) {
-                executor.shutdownNow();
+        // 等待所有任务完成
+        for (Future<?> future : futures) {
+            try {
+                // 等待并获取任务执行结果,这会阻塞，直到任务完成
+                future.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 重新中断当前线程
+                // 处理中断异常，例如记录日志或者根据业务需求进行其他处理
+                log("当前线程在等待任务完成时被中断。");
+            } catch (ExecutionException e) {
+                // 获取实际导致任务执行失败的异常
+                Throwable cause = e.getCause();
+                log("执行任务时出错：" + cause.getMessage());
             }
-        } catch (InterruptedException ie) {
-            executor.shutdownNow();
-            Thread.currentThread().interrupt();
         }
 
 
