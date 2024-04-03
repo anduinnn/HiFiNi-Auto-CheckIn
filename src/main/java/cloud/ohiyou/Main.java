@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 public class Main {
     private static final String COOKIE = System.getenv("COOKIE");
+//    private static final String COOKIE = cloud.ohiyou.test.TestEnum.COOKIE.getValue();
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
