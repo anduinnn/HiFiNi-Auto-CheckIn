@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -35,7 +36,7 @@ public class Main {
             .build();
 
     public static void main(String[] args) {
-        List<CookieSignResult> results = new ArrayList<>();
+        List<CookieSignResult> results = Collections.synchronizedList(new ArrayList<>());
         if (COOKIE == null) {
             throw new RuntimeException("未设置Cookie");
         }
