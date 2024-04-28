@@ -272,7 +272,7 @@ public class Main {
     }
 
     private static void publishWechat(String serverChanKey, String title, String body) {
-        if (serverChanKey == null) {
+        if (serverChanKey == null || serverChanKey.isEmpty()) {
             log("SERVER_CHAN 环境变量未设置");
             return;
         }
@@ -290,7 +290,7 @@ public class Main {
     }
 
     private static void publishTelegramBot(String chatId, String botToken, String message) {
-        if (chatId == null || botToken == null) {
+        if (chatId == null || chatId.isEmpty() || botToken == null || botToken.isEmpty()) {
             log("TG_CHAT_ID 或 TG_BOT_TOKEN 环境变量未设置");
             return;
         }
