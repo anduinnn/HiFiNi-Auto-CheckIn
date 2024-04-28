@@ -29,6 +29,8 @@ public class Main {
     private static final String DINGTALK_WEBHOOK = System.getenv("DINGTALK_WEBHOOK"); // 钉钉机器人 access_token 的值
     private static final String WXWORK_WEBHOOK = System.getenv("WXWORK_WEBHOOK"); // 企业微信机器人 key 的值
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN");
+    private static final String TG_CHAT_ID = System.getenv("TG_CHAT_ID");
+    private static final String TG_BOT_TOKEN = System.getenv("TG_BOT_TOKEN");
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -120,6 +122,7 @@ public class Main {
         String title = allSuccess ? "签到成功" : "签到失败"; // 根据所有签到结果决定标题
         // 推送
         publishWechat(SERVER_CHAN_KEY, title,messageBuilder.toString());
+        publishTelegramBot(TG_CHAT_ID, TG_BOT_TOKEN, title + "\n" + messageBuilder.toString());
         DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, title, messageBuilder.toString(), "", "markdown");
         WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, title, messageBuilder.toString(), "markdown");
     }
@@ -286,4 +289,20 @@ public class Main {
         }
     }
 
+    private static void publishTelegramBot(String chatId, String botToken, String message) {
+        if (chatId == null || botToken == null) {
+            log("TG_CHAT_ID 或 TG_BOT_TOKEN 环境变量未设置");
+            return;
+        }
+
+        try {
+            String url = "https://api.telegram.org/bot" + botToken + "/sendMessage?chat_id=" + chatId + "&text=" + URLEncoder.encode(message, "UTF-8");
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            client.newCall(request).execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
