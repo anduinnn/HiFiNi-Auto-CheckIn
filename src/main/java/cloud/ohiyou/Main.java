@@ -56,6 +56,8 @@ public class Main {
                     processCookie(cookie, index, results);
                 } catch (Exception e) {
                     log("Error processing cookie at index " + index + ": " + e.getMessage());
+                    // 添加消息失败的结果
+                    results.add(new CookieSignResult(new SignResultVO(401, "签到失败"), 0));
                 }
             });
             futures.add(future);
