@@ -8,6 +8,8 @@
 
 ## 通知
 
+🔈 新增`telegram`推送(2024年4月28日15:06:25)
+
 🔈 支持设置多cookie 通过`&`分割,如:cookie1&cookie2(2024年3月29日17:57:46)
 
 🔈 更新新的签到校验方式(2024年3月21日09:06:51)
@@ -16,20 +18,20 @@
 
 🔈 过renji验证
 
-🔈 每天北京时间6.30执行签到任务(根据github当前时段的任务数量,可能会有延迟)
-
 ## 如何使用
 
 1.[Fork 仓库](https://github.com/anduinnn/HiFiNi-Auto-CheckIn)
 
 2.仓库 -> Settings -> Secrets -> New repository secret, 添加Secrets变量如下:
 
-| 变量名           | 信息                                        | 是否必须 |
-| ---------------- | ------------------------------------------- | -------- |
-| COOKIE           | HiFiNi的cookie信息                          | 是       |
+| 变量名              | 信息                                  | 是否必须 |
+|------------------|-------------------------------------| -------- |
+| COOKIE           | HiFiNi的cookie信息                     | 是       |
 | SERVER_CHAN      | [Service酱](https://sct.ftqq.com/)推送的key | 否       |
 | DINGTALK_WEBHOOK | 钉钉机器人推送的token                       | 否       |
-| WXWORK_WEBHOOK | 企业微信机器人推送的token                       | 否       |
+| WXWORK_WEBHOOK   | 企业微信机器人推送的token                     | 否       |
+| TG_CHAT_ID       | Telegram Chat ID                           | 否       |
+| TG_BOT_TOKEN     | Telegram Bot Token                           | 否       |
 
 3.启动工作流程
 ![image](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/b89c7140-be7f-43aa-afaa-8554b4cab752)
