@@ -17,14 +17,14 @@ import java.util.Arrays;
 /**
  * 钉钉工具箱
  * @Author 银垚@mtouyao
- * @Date&Time 2024/3/7 10:25
+ * @Date&Time 2024/3/7
  */
 public class DingTalkUtils {
 
     /**
      * 钉钉机器人
      * @Author 银垚@mtouyao
-     * @Date&Time 2024/3/7 10:25
+     * @Date&Time 2024/3/7
      * @param customRobotToken 你的机器人应用的 access_token 的值/your custom robot token
      * @param messageText 签到信息
      * @param userIDs (可选)用户的 userId 信息[仅限钉钉内部群使用]/you need @ group user's userId
@@ -57,7 +57,7 @@ public class DingTalkUtils {
                 case "text":
                     //定义文本内容
                     OapiRobotSendRequest.Text text = new OapiRobotSendRequest.Text();
-                    text.setContent("HiFiNi签到信息:"+messageTitle+messageText);
+                    text.setContent("HiFiNiBot签到信息:"+messageTitle+messageText);
                     //设置消息类型
                     req.setMsgtype("text");
                     req.setText(text);
@@ -67,7 +67,7 @@ public class DingTalkUtils {
                     // 定义markdown内容
                     OapiRobotSendRequest.Markdown markdown = new OapiRobotSendRequest.Markdown();
                     markdown.setTitle("HiFiNiBot消息通知");
-                    markdown.setText("# HiFiNi签到消息通知 \n ## "+messageTitle+" \n"+messageText);
+                    markdown.setText("# HiFiNiBot签到消息通知 \n ## "+messageTitle+" \n"+messageText);
                     req.setMsgtype("markdown");
                     req.setMarkdown(markdown);
                     break;
