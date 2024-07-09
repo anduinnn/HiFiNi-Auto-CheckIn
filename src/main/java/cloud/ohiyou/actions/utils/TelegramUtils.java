@@ -1,4 +1,4 @@
-package cloud.ohiyou.utils;
+package cloud.ohiyou.actions.utils;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

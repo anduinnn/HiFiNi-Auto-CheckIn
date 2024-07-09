@@ -1,15 +1,16 @@
-package cloud.ohiyou;
+package cloud.ohiyou.actions;
 
 /**
  * @author ohiyou
  * @since 2024/3/1 14:19
  */
 
-import cloud.ohiyou.utils.DingTalkUtils;
-import cloud.ohiyou.utils.TelegramUtils;
-import cloud.ohiyou.utils.WeChatWorkUtils;
-import cloud.ohiyou.vo.CookieSignResult;
-import cloud.ohiyou.vo.SignResultVO;
+
+import cloud.ohiyou.actions.utils.DingTalkUtils;
+import cloud.ohiyou.actions.utils.TelegramUtils;
+import cloud.ohiyou.actions.utils.WeChatWorkUtils;
+import cloud.ohiyou.actions.vo.CookieSignResult;
+import cloud.ohiyou.actions.vo.SignResultVO;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
 

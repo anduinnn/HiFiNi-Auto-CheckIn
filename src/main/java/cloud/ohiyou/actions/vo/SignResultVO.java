@@ -1,4 +1,4 @@
-package cloud.ohiyou.vo;
+package cloud.ohiyou.actions.vo;
 
 /**
  * @author ohiyou
