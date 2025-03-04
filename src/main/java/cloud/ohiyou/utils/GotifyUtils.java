@@ -18,9 +18,10 @@ public class GotifyUtils {
     /**
      * @Author SmileMachine
      * @Date&Time 2025-03-04
-     * @param gotifyUrl Gotify URL
+     * @param gotifyUrl      Gotify URL
      * @param gotifyAppToken Gotify App Token
-     * @param messageText 签到信息
+     * @param messageTitle   签到标题
+     * @param messageText    签到信息
      */
     public static void pushGotifyApp(String gotifyUrl, String gotifyAppToken, String messageTitle, String messageText) {
         if (gotifyUrl == null || gotifyUrl.isEmpty() || gotifyAppToken == null || gotifyAppToken.isEmpty()) {
@@ -30,10 +31,11 @@ public class GotifyUtils {
 
         try {
             String url = gotifyUrl + "/message?token=" + gotifyAppToken;
+            String bodyStr = "{\"title\": \"" + messageTitle + "\", \"message\": \"" + messageText + "\"}";
+            bodyStr = bodyStr.replace("\n", "\\n");
             RequestBody body = RequestBody.create(
-                "{\"title\": \"" + messageTitle + "\", \"message\": \"" + messageText + "\"}",
-                    MediaType.get("application/json; charset=utf-8")
-            );
+                    bodyStr,
+                    MediaType.get("application/json; charset=utf-8"));
             Request request = new Request.Builder()
                     .url(url)
                     .post(body)

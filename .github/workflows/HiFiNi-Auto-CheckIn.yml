@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Build with Ant
+      - name: Build with Maven
         run: |
           mvn compile
           mvn exec:java -Dexec.mainClass="cloud.ohiyou.Main"
