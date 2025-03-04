@@ -5,23 +5,33 @@ package cloud.ohiyou;
  * @since 2024/3/1 14:19
  */
 
-import cloud.ohiyou.utils.DingTalkUtils;
-import cloud.ohiyou.utils.TelegramUtils;
-import cloud.ohiyou.utils.WeChatWorkUtils;
-import cloud.ohiyou.vo.CookieSignResult;
-import cloud.ohiyou.vo.SignResultVO;
-import com.alibaba.fastjson.JSON;
-import okhttp3.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.alibaba.fastjson.JSON;
+
+import cloud.ohiyou.utils.DingTalkUtils;
+import cloud.ohiyou.utils.GotifyUtils;
+import cloud.ohiyou.utils.TelegramUtils;
+import cloud.ohiyou.utils.WeChatWorkUtils;
+import cloud.ohiyou.vo.CookieSignResult;
+import cloud.ohiyou.vo.SignResultVO;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class Main {
     /** ↓↓↓↓↓↓↓↓↓↓ 测试 ↓↓↓↓↓↓↓↓↓↓ */
@@ -40,6 +50,8 @@ public class Main {
     private static final String SERVER_CHAN_KEY = System.getenv("SERVER_CHAN"); // Service酱推送的key
     private static final String TG_CHAT_ID = System.getenv("TG_CHAT_ID"); // Telegram Chat ID
     private static final String TG_BOT_TOKEN = System.getenv("TG_BOT_TOKEN"); // Telegram Bot Token
+    private static final String GOTIFY_URL = System.getenv("GOTIFY_URL"); // Gotify URL
+    private static final String GOTIFY_APP_TOKEN = System.getenv("GOTIFY_APP_TOKEN"); // Gotify APP Token
     /** ↑↑↑↑↑↑↑↑↑↑ 正式 ↑↑↑↑↑↑↑↑↑↑ */
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -139,6 +151,7 @@ public class Main {
         WeChatWorkUtils.pushBotMessage(WXWORK_WEBHOOK, title, messageBuilder.toString(), "markdown"); // 推送企业微信机器人
         DingTalkUtils.pushBotMessage(DINGTALK_WEBHOOK, title, messageBuilder.toString(), "", "markdown"); // 推送钉钉机器人
         TelegramUtils.publishTelegramBot(TG_CHAT_ID, TG_BOT_TOKEN, "HiFiNi签到消息: \n" + title + "：\n" + messageBuilder.toString()); // push telegram bot
+        GotifyUtils.pushGotifyApp(GOTIFY_URL, GOTIFY_APP_TOKEN, title, messageBuilder.toString()); // push gotify
     }
 
 

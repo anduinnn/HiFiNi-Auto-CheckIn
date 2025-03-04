@@ -17,6 +17,8 @@ jobs:
       WXWORK_WEBHOOK: ${{ secrets.WXWORK_WEBHOOK }}
       TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+      GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
+      GOTIFY_APP_TOKEN: ${{ secrets.GOTIFY_APP_TOKEN }}
     runs-on: ubuntu-latest
 
     steps:
