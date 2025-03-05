@@ -61,3 +61,6 @@
 
 ## 配置企业微信机器人
 点击查看[如何配置企业微信机器人？](READMES/WeChatWorkRobotConfigInfo.md)
+
+## 配置 Gotify 推送
+点击查看[如何配置 Gotify 推送？](READMES/GofityConfigInfo.md)
