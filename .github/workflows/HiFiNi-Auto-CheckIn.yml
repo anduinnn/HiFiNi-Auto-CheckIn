@@ -17,6 +17,8 @@ jobs:
       WXWORK_WEBHOOK: ${{ secrets.WXWORK_WEBHOOK }}
       TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
       TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+      GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
+      GOTIFY_APP_TOKEN: ${{ secrets.GOTIFY_APP_TOKEN }}
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +28,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'temurin'
-      - name: Build with Ant
+      - name: Build with Maven
         run: |
           mvn compile
           mvn exec:java -Dexec.mainClass="cloud.ohiyou.Main"
