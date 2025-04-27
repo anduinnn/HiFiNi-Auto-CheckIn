@@ -64,3 +64,7 @@
 
 ## 配置 Gotify 推送
 点击查看[如何配置 Gotify 推送？](READMES/GofityConfigInfo.md)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=anduinnn/HiFiNi-Auto-CheckIn&type=Date)](https://www.star-history.com/#anduinnn/HiFiNi-Auto-CheckIn&Date)
