@@ -1,5 +1,5 @@
 <section align="center">
-    <img src="https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/e50e9fa7-3ddd-4198-be59-fc231f9b8986" alt="稀土掘金" width="260" />
+    <img src="https://github.com/anduinnn/HiFiNi-Auto-CheckIn/assets/68073009/e50e9fa7-3ddd-4198-be59-fc231f9b8986" alt="hifini" width="260" />
 </section>
 
 <h1 align="center">HiFiNi - 音乐磁场签到助手</h1>
