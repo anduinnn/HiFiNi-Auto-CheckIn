@@ -84,11 +84,11 @@ public class Main {
         } catch (InterruptedException e) {
             executor.shutdownNow();
         }
+        publishResults(results);
 
+        // 关闭OkHttpClient
         client.dispatcher().executorService().shutdownNow();
         client.connectionPool().evictAll();
-
-        publishResults(results);
     }
 
     /**
