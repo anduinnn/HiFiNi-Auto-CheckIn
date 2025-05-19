@@ -3,8 +3,12 @@ package cloud.ohiyou.service;
 import cloud.ohiyou.config.EnvConfig;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author ohiyou
@@ -26,16 +30,23 @@ public class ServerChanPushStrategy implements IMessagePushStrategy {
      */
     @Override
     public void pushMessage(String title, String message) {
+        String token = EnvConfig.get().getServerChan();
+        String url   = null;
         try {
-            String serverChan = EnvConfig.get().getServerChan();
-            String url = "https://sctapi.ftqq.com/" + serverChan + ".send?title=" +
-                    URLEncoder.encode(title, "UTF-8") + "&desp=" + URLEncoder.encode(message, "UTF-8");
-            Request request = new Request.Builder()
-                    .url(url)
-                    .build();
-            client.newCall(request).execute();
-        } catch (Exception e) {
+            url = "https://sctapi.ftqq.com/" + token + ".send?title=" +
+                    URLEncoder.encode(title, "UTF-8") +
+                    "&desp=" + URLEncoder.encode(message, String.valueOf(StandardCharsets.UTF_8));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Request request = new Request.Builder().url(url).build();
+
+        // try-with-resources 关闭 Response
+        try (Response resp = client.newCall(request).execute()) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
