@@ -5,7 +5,7 @@
 
 <h1 align="center">HiFiNi - 音乐磁场签到助手</h1>
 
-<p align="center">一键签到、消息推送、自动化工作流。</p>
+<p align="center">自动签到、消息推送、自动化工作流。</p>
 
 ---
 
