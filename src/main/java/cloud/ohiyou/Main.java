@@ -143,7 +143,7 @@ public class Main {
                 .build();
         // 发送签到请求
         Request request = new Request.Builder()
-                .url("https://www.hifini.com/sg_sign.htm")
+                .url("https://hifiti.com/sg_sign.htm")
                 .post(formBody)
                 .addHeader("Cookie", cookie)
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
@@ -212,7 +212,7 @@ public class Main {
     private static String getSignPage(String cookie) {
         // 先携带cookie访问一次签到页面获取sign
         Request request = new Request.Builder()
-                .url("https://www.hifini.com/sg_sign.htm")
+                .url("https://hifiti.com/sg_sign.htm")
                 .get()
                 .addHeader("Cookie", cookie)
                 .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/")
