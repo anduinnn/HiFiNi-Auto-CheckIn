@@ -25,7 +25,7 @@
 //     * @throws IOException
 //     */
 //    private static String getSignKey(String result) throws IOException {
-//        String baseUrl = "https://www.hifini.com";
+//        String baseUrl = "https://hifiti.com";
 //        // 获取 src 后的地址
 //        Pattern patternSrc = Pattern.compile("src=\"([^\"]+)\"");
 //        Matcher matcherSrc = patternSrc.matcher(result);
@@ -75,7 +75,7 @@
 //        System.out.println("尝试第" + attempt + "次;最大:" + maxAttempts + "次");
 //
 //        Request request = new Request.Builder()
-//                .url("https://www.hifini.com/sg_sign.htm")
+//                .url("https://hifiti.com/sg_sign.htm")
 //                .post(RequestBody.create("", MediaType.get("application/json; charset=utf-8")))
 //                .addHeader("Cookie", cookieValue)
 //                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
@@ -116,7 +116,7 @@
 //
 //    private static String getRenjiToken(String key) throws IOException {
 //        // MD5加密的字符串:renji
-//        String baseUrl = "https://www.hifini.com/a20be899_96a6_40b2_88ba_32f1f75f1552_yanzheng_ip.php";
+//        String baseUrl = "https://hifiti.com/a20be899_96a6_40b2_88ba_32f1f75f1552_yanzheng_ip.php";
 //        String type = "96c4e20a0e951f471d32dae103e83881";
 //        String value = "05bb5aba7f3f54a677997f862f1a9020";
 //
