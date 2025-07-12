@@ -47,10 +47,10 @@ public class SignResultVO {
 
         if (userInfo != null) {
             if (userInfo.getCoins() != null) {
-                sb.append("\n当前金币: ").append(userInfo.getCoins());
+                sb.append("\n\n当前金币: ").append(userInfo.getCoins());
             }
             if (userInfo.getSignStreak() != null) {
-                sb.append("\n连续签到: 第").append(userInfo.getSignStreak()).append("天");
+                sb.append("\n\n连续签到: 第").append(userInfo.getSignStreak()).append("天");
             }
         }
 
