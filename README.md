@@ -45,7 +45,7 @@
 
 ### 获取 HiFiNi Cookie
 
-1. 访问 [https://www.hifini.com/](https://www.hifini.com/)
+1. 访问 [https://www.hifiti.com/](https://www.hifiti.com/)
 2. 打开浏览器开发者工具（`F12`）。
 3. 在 `请求头` 中找到并复制你的 Cookie。
 
