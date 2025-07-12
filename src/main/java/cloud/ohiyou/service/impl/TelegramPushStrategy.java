@@ -1,6 +1,7 @@
-package cloud.ohiyou.service;
+package cloud.ohiyou.service.impl;
 
 import cloud.ohiyou.config.EnvConfig;
+import cloud.ohiyou.service.IMessagePushStrategy;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 

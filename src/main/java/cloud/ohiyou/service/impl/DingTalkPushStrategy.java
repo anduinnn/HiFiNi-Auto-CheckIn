@@ -1,6 +1,7 @@
-package cloud.ohiyou.service;
+package cloud.ohiyou.service.impl;
 
 import cloud.ohiyou.config.EnvConfig;
+import cloud.ohiyou.service.IMessagePushStrategy;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
