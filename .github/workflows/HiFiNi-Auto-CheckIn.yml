@@ -31,4 +31,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn compile
-          mvn exec:java -Dexec.mainClass="cloud.ohiyou.Main"
+          mvn -B exec:java \
+          -Dexec.mainClass=cloud.ohiyou.Main \
+          -Dexec.cleanupDaemonThreads=false
+
