@@ -130,10 +130,10 @@ public class Main {
 
                 // 用户信息
                 messageBuilder.append(signResult.getFormattedMessage());
-                messageBuilder.append("\n 耗时: ").append(result.getDuration()).append("ms\n");
+                messageBuilder.append("\n\n耗时: ").append(result.getDuration()).append("ms\n");
 
                 // 添加分隔线
-                messageBuilder.append("────────────────────\n");
+                messageBuilder.append("\n\n────────────────────\n\n");
 
                 // 检查是否成功
                 if (signResult.getCode() == null || signResult.getCode() != 1) {
