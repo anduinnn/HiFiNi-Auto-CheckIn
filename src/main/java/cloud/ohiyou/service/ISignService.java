@@ -44,7 +44,7 @@ public interface ISignService {
      */
     default SignResultVO signInWithUserInfo(String cookie) {
         SignResultVO signResult = signIn(cookie);
-        if (signResult.getCode() == 1 || signResult.getCode() == -1) {  // 签到成功才获取用户信息
+        if (signResult.getCode() == 0 || signResult.getCode() == -1) {  // 签到成功才获取用户信息
             try {
                 UserInfoVO userInfo = getUserInfo(cookie);
                 if (userInfo.getUserName() != null) {

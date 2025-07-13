@@ -49,7 +49,7 @@ public class Main {
             Future<?> future = executor.submit(() -> {
                 try {
                     long startTime = System.currentTimeMillis();
-                    logger.info("开始处理第 {} 个cookie: {}", index + 1, cookie);
+                    logger.info("开始处理第 {} 个cookie", index + 1);
 
                     // 格式化cookie，去除空格等，同时检测cookie格式
                     String formattedCookie = formatCookie(cookie.trim(), index);
