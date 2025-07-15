@@ -70,6 +70,7 @@ public class HifitiSignService implements ISignService {
                 }
 
                 String responseBody = readResponse(response);
+                logger.info("签到响应内容: {}", responseBody);
                 return JSON.parseObject(responseBody, SignResultVO.class);
             }
         } catch (Exception e) {
