@@ -136,7 +136,7 @@ public class Main {
                 messageBuilder.append("\n\n────────────────────\n\n");
 
                 // 检查是否成功
-                if (signResult.getCode() == null || signResult.getCode() != 1) {
+                if (signResult.getCode() == null || signResult.getCode() != 0) {
                     allSuccess = false;
                 }
             }
@@ -148,7 +148,7 @@ public class Main {
         int successCount = 0;
         int totalCount = results.size();
         for (CookieSignResult result : results) {
-            if (result.getSignResult().getCode() != null && result.getSignResult().getCode() == 1) {
+            if (result.getSignResult().getCode() != null && result.getSignResult().getCode() == 0) {
                 successCount++;
             }
         }
