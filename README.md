@@ -90,6 +90,108 @@
 
 ---
 
+## 🐳 Docker 部署
+
+适用于自有服务器或 VPS。
+
+### 1. 构建镜像
+
+```bash
+docker build -t hifini-checkin .
+```
+
+### 2. 运行
+
+```bash
+docker run --rm \
+  -e COOKIE="你的HiFiTi_Cookie" \
+  -e HIFIHI_COOKIE="你的HiFiHi_Cookie" \
+  -e SERVER_CHAN="你的Server酱Key" \
+  hifini-checkin
+```
+
+### 3. 定时执行（可选）
+
+使用 cron 每天早上 6:30 执行：
+
+```bash
+30 6 * * * docker run --rm -e COOKIE="xxx" -e HIFIHI_COOKIE="xxx" hifini-checkin
+```
+
+---
+
+## 🌩 腾讯云函数部署
+
+Serverless 方式，无需维护服务器。
+
+### 1. 打包
+
+```bash
+mvn package -DskipTests
+```
+
+生成的 jar 文件位于 `target/HifiNiAutoCheckIn-1.0-SNAPSHOT-shaded.jar`
+
+### 2. 创建云函数
+
+1. 登录 [腾讯云函数控制台](https://console.cloud.tencent.com/scf)
+2. 新建函数 → 从头开始
+3. 配置：
+   - 运行环境：`Java 8`
+   - 执行方法：`cloud.ohiyou.ScfHandler::mainHandler`
+   - 内存：`256 MB`
+   - 超时时间：`60 秒`
+
+### 3. 上传代码
+
+上传 `target/HifiNiAutoCheckIn-1.0-SNAPSHOT-shaded.jar`
+
+### 4. 配置环境变量
+
+在函数配置中添加环境变量：`COOKIE`、`HIFIHI_COOKIE` 等
+
+### 5. 添加定时触发器
+
+创建定时触发器，Cron 表达式：`0 30 6 * * * *`（每天 6:30 执行）
+
+---
+
+## 🌥 阿里云函数计算部署
+
+Serverless 方式，无需维护服务器。
+
+### 1. 打包
+
+```bash
+mvn package -DskipTests
+```
+
+生成的 jar 文件位于 `target/HifiNiAutoCheckIn-1.0-SNAPSHOT-shaded.jar`
+
+### 2. 创建函数
+
+1. 登录 [阿里云函数计算控制台](https://fcnext.console.aliyun.com/)
+2. 创建服务 → 创建函数
+3. 配置：
+   - 运行环境：`Java 8`
+   - 请求处理程序：`cloud.ohiyou.AliyunFcHandler::handleRequest`
+   - 内存：`256 MB`
+   - 超时时间：`60 秒`
+
+### 3. 上传代码
+
+上传 `target/HifiNiAutoCheckIn-1.0-SNAPSHOT-shaded.jar`
+
+### 4. 配置环境变量
+
+在函数配置中添加环境变量：`COOKIE`、`HIFIHI_COOKIE` 等
+
+### 5. 添加定时触发器
+
+创建定时触发器，Cron 表达式：`0 30 6 * * *`（每天 6:30 执行）
+
+---
+
 ## 🔄 如何同步最新代码？
 
 如果 Fork 后需要拉取主仓库更新：

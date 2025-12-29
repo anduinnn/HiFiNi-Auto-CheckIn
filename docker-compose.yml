@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  checkin:
+    build: .
+    environment:
+      # HiFiTi Cookie（支持多账号，使用 & 分隔）
+      - COOKIE=${COOKIE}
+      # HiFiHi Cookie（支持多账号，使用 & 分隔）
+      - HIFIHI_COOKIE=${HIFIHI_COOKIE}
+      # 推送配置（可选）
+      - SERVER_CHAN=${SERVER_CHAN}
+      - DINGTALK_WEBHOOK=${DINGTALK_WEBHOOK}
+      - WXWORK_WEBHOOK=${WXWORK_WEBHOOK}
+      - TG_CHAT_ID=${TG_CHAT_ID}
+      - TG_BOT_TOKEN=${TG_BOT_TOKEN}
+      - GOTIFY_URL=${GOTIFY_URL}
+      - GOTIFY_APP_TOKEN=${GOTIFY_APP_TOKEN}
