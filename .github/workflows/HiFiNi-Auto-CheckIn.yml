@@ -35,4 +35,10 @@ jobs:
           mvn -B exec:java \
           -Dexec.mainClass=cloud.ohiyou.HifiniApplication \
           -Dexec.cleanupDaemonThreads=false
-
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 2
