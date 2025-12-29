@@ -5,7 +5,7 @@
 
 <h1 align="center">HiFiNi - 音乐磁场签到助手</h1>
 
-<p align="center">自动签到、消息推送、自动化工作流。</p>
+<p align="center">支持 HiFiTi 和 HiFiHi 平台的自动签到、消息推送、自动化工作流。</p>
 
 ---
 
@@ -24,7 +24,8 @@
 
 | 名称               | 说明                                                      | 必填  |
 |:-----------------|:--------------------------------------------------------|:----|
-| COOKIE           | HiFiNi 的 Cookie 信息（支持多账号，使用 `&` 分隔，如 `cookie1&cookie2`） | ✅ 是 |
+| COOKIE           | HiFiTi 的 Cookie 信息（支持多账号，使用 `&` 分隔，如 `cookie1&cookie2`） | 否   |
+| HIFIHI_COOKIE    | HiFiHi 的 Cookie 信息（支持多账号，使用 `&` 分隔）                     | 否   |
 | SERVER_CHAN      | [Server酱](https://sct.ftqq.com/)推送 Key（推荐）              | 否   |
 | DINGTALK_WEBHOOK | 钉钉机器人推送 Token                                           | 否   |
 | WXWORK_WEBHOOK   | 企业微信机器人推送 Token                                         | 否   |
@@ -32,6 +33,8 @@
 | TG_BOT_TOKEN     | Telegram Bot Token                                      | 否   |
 | GOTIFY_URL       | 部署的地址：`https://gotify.example.com`                      | 否   |
 | GOTIFY_APP_TOKEN | 创建应用获取的token                                            | 否   |
+
+> 注：按需配置，想签到哪个平台就填对应的 Cookie。
 
 ### 3. 启动工作流程
 
@@ -43,13 +46,21 @@
 
 ## 🧩 如何获取必要信息？
 
-### 获取 HiFiNi Cookie
+### 获取 HiFiTi Cookie
 
 1. 访问 [https://www.hifiti.com/](https://www.hifiti.com/)
 2. 打开浏览器开发者工具（`F12`）。
 3. 在 `请求头` 中找到并复制你的 Cookie。
 
 ![获取 Cookie 示例](https://github.com/anduinnn/HifiNiAutoCheckIn/assets/68073009/97528823-4d31-4c72-bcca-e95bb5d75792)
+
+---
+
+### 获取 HiFiHi Cookie
+
+1. 访问 [https://hifihi.com/](https://hifihi.com/)
+2. 打开浏览器开发者工具（`F12`）。
+3. 在 `请求头` 中找到并复制你的 Cookie。
 
 ---
 
