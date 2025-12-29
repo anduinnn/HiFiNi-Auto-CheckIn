@@ -48,6 +48,9 @@ public class HifihiSignService implements ISignService {
                     .addHeader("User-Agent", userAgent)
                     .addHeader("X-Requested-With", "XMLHttpRequest")
                     .addHeader("Referer", HifiniConstants.HIFIHI_SIGN_URL)
+                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -89,6 +92,9 @@ public class HifihiSignService implements ISignService {
                     .addHeader("Cookie", cookie)
                     .addHeader("User-Agent", userAgent)
                     .addHeader("Referer", HifiniConstants.HIFIHI_BASE_URL + "/")
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -123,6 +129,9 @@ public class HifihiSignService implements ISignService {
                     .addHeader("Cookie", cookie)
                     .addHeader("User-Agent", userAgent)
                     .addHeader("Referer", HifiniConstants.HIFIHI_BASE_URL + "/")
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
