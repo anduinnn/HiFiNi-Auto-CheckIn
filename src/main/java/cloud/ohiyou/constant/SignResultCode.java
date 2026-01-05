@@ -7,9 +7,9 @@ package cloud.ohiyou.constant;
  */
 public enum SignResultCode {
 
-    SUCCESS(1, "签到成功"),
+    SUCCESS(0, "签到成功"),
     ALREADY_SIGNED(-1, "今日已签到"),
-    FAILURE(0, "签到失败"),
+    FAILURE(2, "签到失败"),
     COOKIE_INVALID(401, "Cookie已失效"),
     NETWORK_ERROR(500, "网络错误"),
     UNKNOWN_ERROR(999, "未知错误");

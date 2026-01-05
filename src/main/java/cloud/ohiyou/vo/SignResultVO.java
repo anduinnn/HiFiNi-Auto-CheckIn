@@ -40,7 +40,7 @@ public class SignResultVO {
         StringBuilder sb = new StringBuilder();
 
         // 根据code显示不同的结果图标
-        if (code != null && code == 1) {
+        if (code != null && code == 0) {
             sb.append(message);  // 签到成功
         } else if (code != null && code == -1) {
             sb.append(message);  // 今日已签到
