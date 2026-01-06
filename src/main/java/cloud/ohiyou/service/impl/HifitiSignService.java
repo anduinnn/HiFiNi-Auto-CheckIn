@@ -52,7 +52,7 @@ public class HifitiSignService implements ISignService {
 
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    return new SignResultVO(0, "请求失败，Http状态码：" + response.code());
+                    return new SignResultVO(2, "请求失败，Http状态码：" + response.code());
                 }
 
                 String responseBody = ResponseUtils.readResponse(response);
@@ -61,7 +61,7 @@ public class HifitiSignService implements ISignService {
             }
         } catch (Exception e) {
             logger.error("签到异常: {}", e.getMessage(), e);
-            return new SignResultVO(0, "签到异常：" + e.getMessage());
+            return new SignResultVO(2, "签到异常：" + e.getMessage());
         }
     }
 

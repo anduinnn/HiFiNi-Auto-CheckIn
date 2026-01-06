@@ -92,12 +92,12 @@ public class SignTaskExecutor {
             } else {
                 // Cookie 格式无效
                 results.add(new CookieSignResult(
-                        new SignResultVO(0, "Cookie格式无效"), 0));
+                        new SignResultVO(2, "Cookie格式无效"), 0));
             }
         } catch (Exception e) {
             logger.error("处理第 {} 个cookie时发生错误: {}", index + 1, e.getMessage(), e);
             results.add(new CookieSignResult(
-                    new SignResultVO(0, "签到失败: " + e.getMessage()), 0));
+                    new SignResultVO(2, "签到失败: " + e.getMessage()), 0));
         }
     }
 
