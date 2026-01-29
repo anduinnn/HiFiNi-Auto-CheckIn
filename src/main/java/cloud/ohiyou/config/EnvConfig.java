@@ -1,5 +1,8 @@
 package cloud.ohiyou.config;
 
+import lombok.Getter;
+
+@Getter
 public class EnvConfig {
 
     private final static EnvConfig INSTANCE = new EnvConfig();
@@ -8,6 +11,7 @@ public class EnvConfig {
     private final String wxWorkRobotMessageType;
     private final String dingTalkRobotKey;
     private final String cookie;
+    private final String hifihiCookie;
     private final String tgChatId;
     private final String tgBotToken;
     private final String gotifyUrl;
@@ -16,6 +20,7 @@ public class EnvConfig {
 
     private EnvConfig() {
         cookie = System.getenv("COOKIE");
+        hifihiCookie = System.getenv("HIFIHI_COOKIE");
         serverChan = System.getenv("SERVER_CHAN");
         wxworkrobotkey = System.getenv("WXWORK_WEBHOOK");
         wxWorkRobotMessageType = System.getenv().getOrDefault("WXWORK_MSG_TYPE", "markdown");
@@ -30,38 +35,6 @@ public class EnvConfig {
         return INSTANCE;
     }
 
-
-    public String getServerChan() {
-        return serverChan;
-    }
-
-    public String getWxworkrobotkey() {
-        return wxworkrobotkey;
-    }
-
-    public String getDingTalkRobotKey() {
-        return dingTalkRobotKey;
-    }
-
-    public String getCookie() {
-        return cookie;
-    }
-
-    public String getTgChatId() {
-        return tgChatId;
-    }
-
-    public String getTgBotToken() {
-        return tgBotToken;
-    }
-
-    public String getGotifyUrl() {
-        return gotifyUrl;
-    }
-
-    public String getGotifyAppToken() {
-        return gotifyAppToken;
-    }
 
     public String getWXWorkMessageType() {
         return wxWorkRobotMessageType;

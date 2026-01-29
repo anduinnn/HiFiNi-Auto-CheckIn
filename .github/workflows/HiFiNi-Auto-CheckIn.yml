@@ -12,6 +12,7 @@ jobs:
   build:
     env:
       COOKIE: ${{ secrets.COOKIE }}
+      HIFIHI_COOKIE: ${{ secrets.HIFIHI_COOKIE }}
       SERVER_CHAN: ${{ secrets.SERVER_CHAN }}
       DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
       WXWORK_WEBHOOK: ${{ secrets.WXWORK_WEBHOOK }}
@@ -32,7 +33,7 @@ jobs:
         run: |
           mvn compile
           mvn -B exec:java \
-          -Dexec.mainClass=cloud.ohiyou.Main \
+          -Dexec.mainClass=cloud.ohiyou.HifiniApplication \
           -Dexec.cleanupDaemonThreads=false
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2

@@ -16,13 +16,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * HiFiNi 签到服务实现
+ * HiFiHi 签到服务实现
  *
  * @author ohiyou
  */
-public class HifitiSignService implements ISignService {
+public class HifihiSignService implements ISignService {
 
-    private static final Logger logger = LoggerFactory.getLogger(HifitiSignService.class);
+    private static final Logger logger = LoggerFactory.getLogger(HifihiSignService.class);
 
     private static final OkHttpClient client = OkHttpUtils.getClient();
     private final Random random = new Random();
@@ -42,12 +42,15 @@ public class HifitiSignService implements ISignService {
                     MediaType.get("application/x-www-form-urlencoded; charset=UTF-8"));
 
             Request request = new Request.Builder()
-                    .url(HifiniConstants.SIGN_URL)
+                    .url(HifiniConstants.HIFIHI_SIGN_URL)
                     .post(emptyBody)
                     .addHeader("Cookie", cookie)
                     .addHeader("User-Agent", userAgent)
                     .addHeader("X-Requested-With", "XMLHttpRequest")
-                    .addHeader("Referer", HifiniConstants.SIGN_URL)
+                    .addHeader("Referer", HifiniConstants.HIFIHI_SIGN_URL)
+                    .addHeader("Accept", "application/json, text/javascript, */*; q=0.01")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -56,11 +59,11 @@ public class HifitiSignService implements ISignService {
                 }
 
                 String responseBody = ResponseUtils.readResponse(response);
-                logger.info("签到响应内容: {}", responseBody);
+                logger.info("HiFiHi 签到响应内容: {}", responseBody);
                 return JSON.parseObject(responseBody, SignResultVO.class);
             }
         } catch (Exception e) {
-            logger.error("签到异常: {}", e.getMessage(), e);
+            logger.error("HiFiHi 签到异常: {}", e.getMessage(), e);
             return new SignResultVO(2, "签到异常：" + e.getMessage());
         }
     }
@@ -84,11 +87,14 @@ public class HifitiSignService implements ISignService {
             String userAgent = getRandomUserAgent();
 
             Request request = new Request.Builder()
-                    .url(HifiniConstants.USER_INFO_URL)
+                    .url(HifiniConstants.HIFIHI_USER_INFO_URL)
                     .get()
                     .addHeader("Cookie", cookie)
                     .addHeader("User-Agent", userAgent)
-                    .addHeader("Referer", HifiniConstants.BASE_URL + "/")
+                    .addHeader("Referer", HifiniConstants.HIFIHI_BASE_URL + "/")
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -101,7 +107,7 @@ public class HifitiSignService implements ISignService {
             }
 
         } catch (Exception e) {
-            logger.error("获取用户信息异常: {}", e.getMessage(), e);
+            logger.error("HiFiHi 获取用户信息异常: {}", e.getMessage(), e);
             throw new RuntimeException("获取用户信息失败: " + e.getMessage());
         }
     }
@@ -118,11 +124,14 @@ public class HifitiSignService implements ISignService {
             String userAgent = getRandomUserAgent();
 
             Request request = new Request.Builder()
-                    .url(HifiniConstants.SIGN_URL)
+                    .url(HifiniConstants.HIFIHI_SIGN_URL)
                     .get()
                     .addHeader("Cookie", cookie)
                     .addHeader("User-Agent", userAgent)
-                    .addHeader("Referer", HifiniConstants.BASE_URL + "/")
+                    .addHeader("Referer", HifiniConstants.HIFIHI_BASE_URL + "/")
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .addHeader("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
+                    .addHeader("Accept-Encoding", "gzip, deflate")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -135,7 +144,7 @@ public class HifitiSignService implements ISignService {
             }
 
         } catch (Exception e) {
-            logger.error("获取连续签到天数异常: {}", e.getMessage(), e);
+            logger.error("HiFiHi 获取连续签到天数异常: {}", e.getMessage(), e);
             return null;
         }
     }
@@ -162,7 +171,7 @@ public class HifitiSignService implements ISignService {
             }
 
         } catch (Exception e) {
-            logger.error("解析用户信息时出错: {}", e.getMessage(), e);
+            logger.error("HiFiHi 解析用户信息时出错: {}", e.getMessage(), e);
         }
 
         return userInfo;
@@ -178,21 +187,21 @@ public class HifitiSignService implements ISignService {
             Matcher streakMatcher = streakPattern.matcher(signPageContent);
             if (streakMatcher.find()) {
                 int streak = Integer.parseInt(streakMatcher.group(1));
-                logger.debug("解析连续签到天数成功: {} 天", streak);
+                logger.debug("HiFiHi 解析连续签到天数成功: {} 天", streak);
                 return streak;
             } else {
-                logger.debug("页面中未找到连续签到天数信息");
+                logger.debug("HiFiHi 页面中未找到连续签到天数信息");
                 // 尝试更宽松的匹配
                 Pattern fallbackPattern = Pattern.compile(HifiniConstants.REGEX_SIGN_STREAK_FALLBACK);
                 Matcher fallbackMatcher = fallbackPattern.matcher(signPageContent);
                 if (fallbackMatcher.find()) {
                     int streak = Integer.parseInt(fallbackMatcher.group(1));
-                    logger.debug("通过备用方式解析连续签到天数成功: {} 天", streak);
+                    logger.debug("HiFiHi 通过备用方式解析连续签到天数成功: {} 天", streak);
                     return streak;
                 }
             }
         } catch (Exception e) {
-            logger.error("解析连续签到天数时出错: {}", e.getMessage(), e);
+            logger.error("HiFiHi 解析连续签到天数时出错: {}", e.getMessage(), e);
         }
         return null;
     }

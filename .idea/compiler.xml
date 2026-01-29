@@ -8,7 +8,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="HifiNiAutoCheckIn" />
-        <module name="HiFiNi-Auto-CheckIn" />
       </profile>
     </annotationProcessing>
   </component>

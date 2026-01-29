@@ -1,8 +1,11 @@
 package cloud.ohiyou.vo;
 
+import cloud.ohiyou.constant.SignResultCode;
 import lombok.Data;
 
 /**
+ * 签到结果值对象
+ *
  * @author ohiyou
  * @since 2024/2/21 11:37
  */
@@ -37,7 +40,7 @@ public class SignResultVO {
         StringBuilder sb = new StringBuilder();
 
         // 根据code显示不同的结果图标
-        if (code != null && code == 1) {
+        if (code != null && code == 0) {
             sb.append(message);  // 签到成功
         } else if (code != null && code == -1) {
             sb.append(message);  // 今日已签到
@@ -57,4 +60,21 @@ public class SignResultVO {
         return sb.toString();
     }
 
+    /**
+     * 获取签到结果码枚举
+     *
+     * @return 签到结果码枚举
+     */
+    public SignResultCode getResultCode() {
+        return SignResultCode.fromCode(this.code);
+    }
+
+    /**
+     * 判断签到是否成功
+     *
+     * @return 是否成功（签到成功或今日已签到）
+     */
+    public boolean isSuccess() {
+        return getResultCode().isSuccess();
+    }
 }

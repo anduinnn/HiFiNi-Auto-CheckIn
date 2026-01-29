@@ -69,7 +69,48 @@
             <version>1.2.12</version>
         </dependency>
 
+        <!-- 腾讯云函数 SDK -->
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>scf-java-events</artifactId>
+            <version>0.0.4</version>
+        </dependency>
+
+        <!-- 阿里云函数计算 SDK -->
+        <dependency>
+            <groupId>com.aliyun.fc.runtime</groupId>
+            <artifactId>fc-java-core</artifactId>
+            <version>1.4.1</version>
+        </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven Shade Plugin: 打包可执行 fat jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>cloud.ohiyou.HifiniApplication</mainClass>
+                                </transformer>
+                            </transformers>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
