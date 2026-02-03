@@ -42,3 +42,6 @@ jobs:
           repository: ${{ github.repository }}
           retain_days: 1
           keep_minimum_runs: 2
+    permissions:                                                                                                                                                                                                                                                                                                 
+      actions: write    # 允许删除工作流运行记录                                                                                                                                                                                                                                                                 
+      contents: read    # 允许 checkout 代码   
